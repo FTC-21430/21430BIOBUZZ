@@ -1,5 +1,6 @@
  package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import com.broombots.sweep.Classes.LocalizationPacket;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -9,7 +10,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
-import org.firstinspires.ftc.teamcode.Resources.OdometryPacket;
 
 public class GobildaPinpointModuleFirmware {
 
@@ -134,8 +134,8 @@ public class GobildaPinpointModuleFirmware {
         pinpoint.recalibrateIMU();
     }
 
-    public OdometryPacket getOdometryPacket(){
-        return new OdometryPacket(getRobotX(),getRobotY(),getRobotAngle(),getVelocityX(),getVelocityY());
+    public LocalizationPacket getLocalizationPacket(){
+        return new LocalizationPacket(getRobotX(),getRobotY(),getRobotAngle(),getVelocityX(),getVelocityY());
     }
 }
 
