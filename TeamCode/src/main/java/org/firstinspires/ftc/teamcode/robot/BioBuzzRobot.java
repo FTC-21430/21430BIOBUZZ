@@ -10,10 +10,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.actions.ExampleAction;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.robot.subsystems.Flywheel;
 
 public class BioBuzzRobot extends SWEEPRobot {
     // Robot subsystems
     Drivetrain drivetrain;
+    Flywheel flywheel;
     /**
      * Constructor for the SoftwareTestingBot class.
      * Initializes the robot's subsystems and takes FIRSTSDK bits
@@ -23,15 +25,16 @@ public class BioBuzzRobot extends SWEEPRobot {
     public BioBuzzRobot(HardwareMap hardwareMap, Telemetry telemetry){
         runtime = new ElapsedTime();
         this.drivetrain = new Drivetrain(hardwareMap, telemetry, false);
+        this.flywheel = new Flywheel(hardwareMap, telemetry, new ElapsedTime(),70,65,45);
         subsystems = new Subsystem[]{
                 drivetrain,
+                flywheel
         };
     }
     /**
      * Initializes the robot's subsystems and sets up any necessary configurations.
      * This method is called once when the robot is initialized.
      */
-    @Override
     public void initialize() {
         drivetrain.enableFieldCentricDriving(false);
     }
@@ -39,7 +42,6 @@ public class BioBuzzRobot extends SWEEPRobot {
      * Updates the robot's subsystems and actions during teleop mode.
      * This method is called repeatedly during the teleop period.
      */
-    @Override
     public void teleopUpdate() {
         updateActions();
     }
@@ -47,13 +49,15 @@ public class BioBuzzRobot extends SWEEPRobot {
      * Updates the robot's subsystems and actions during autonomous mode.
      * This method is called repeatedly during the autonomous period.
      */
-    @Override
     public void autonomousUpdate() {
         updateActions();
     }
     // Subsystem getters
     public Drivetrain getDrivetrain() {
         return drivetrain;
+    }
+    public Flywheel getFlywheel(){
+        return flywheel;
     }
     // Robot action definitions
     /**
@@ -66,6 +70,7 @@ public class BioBuzzRobot extends SWEEPRobot {
     public ExampleAction exampleAction(Pos2D position, double time, double range){
         return new ExampleAction(this, position, time, range);
     }
+
 
     /**
      * Simplified example action which used default parameters
