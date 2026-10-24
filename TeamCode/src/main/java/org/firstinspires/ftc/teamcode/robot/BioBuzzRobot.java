@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.actions.ExampleAction;
+import org.firstinspires.ftc.teamcode.robot.actions.SetFlywheelSpeedAction;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Flywheel;
 
@@ -16,19 +17,25 @@ public class BioBuzzRobot extends SWEEPRobot {
     // Robot subsystems
     Drivetrain drivetrain;
     Flywheel flywheel;
+
+    Flywheel flywheelNectar;
+
     /**
      * Constructor for the SoftwareTestingBot class.
      * Initializes the robot's subsystems and takes FIRSTSDK bits
      * @param hardwareMap The hardware map used to access the robot's hardware components.
      * @param telemetry   The telemetry object used for sending data to the driver station.
      */
+    //Will update numbers when testing for flywheel and nectar speeds that we need. Right now this works for Siphysius
     public BioBuzzRobot(HardwareMap hardwareMap, Telemetry telemetry){
         runtime = new ElapsedTime();
         this.drivetrain = new Drivetrain(hardwareMap, telemetry, false);
         this.flywheel = new Flywheel(hardwareMap, telemetry, new ElapsedTime(),70,65,45);
+        this.flywheelNectar = new Flywheel(hardwareMap,telemetry,new ElapsedTime(),50,40,65);
         subsystems = new Subsystem[]{
                 drivetrain,
-                flywheel
+                flywheel,
+                flywheelNectar
         };
     }
     /**
@@ -69,6 +76,9 @@ public class BioBuzzRobot extends SWEEPRobot {
      */
     public ExampleAction exampleAction(Pos2D position, double time, double range){
         return new ExampleAction(this, position, time, range);
+    }
+    public SetFlywheelSpeedAction flywheelAction(Pos2D position, double time,double speed){
+        return new SetFlywheelSpeedAction(this, position,time,speed);
     }
 
 

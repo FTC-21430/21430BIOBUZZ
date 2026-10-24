@@ -21,9 +21,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class Flywheel implements Subsystem {
 
-    public static double  p = 70;
-    public static double i = 0;
-    public static double d = 30;
     public static double f = 13.5;
 
     // Hardware map for accessing robot hardware
@@ -46,11 +43,11 @@ public class Flywheel implements Subsystem {
      * @param hardwareMap HardwareMap for accessing hardware devices
      * @param telemetry Telemetry for reporting data
      * @param runtime ElapsedTime instance for timing
-     * @param P Proportional constant for PIDF
-     * @param I Integral constant for PIDF
-     * @param D Derivative constant for PIDF
+     * @param p Proportional constant for PIDF
+     * @param i Integral constant for PIDF
+     * @param d Derivative constant for PIDF
      */
-    public Flywheel(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime runtime, double P, double I, double D){
+    public Flywheel(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime runtime, double p, double i, double d){
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
         this.runtime = runtime;
@@ -64,6 +61,7 @@ public class Flywheel implements Subsystem {
         // Set PIDF coefficients for velocity control
         flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(p,i,d,f));
     }
+
     @Override
     public void update(){
     }
@@ -111,7 +109,7 @@ public class Flywheel implements Subsystem {
     /**
      * Updates the flywheel's speed control and records the current speed.
      */
-    public void updateSpeedControl(){
+    public void updateSpeedControl(double p, double i, double d){
         flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(p,i,d,f));
 
         flywheel.setVelocity(targetSpeed);
@@ -125,6 +123,11 @@ public class Flywheel implements Subsystem {
      */
     public boolean isAtSpeed(){
         return Math.abs(currentSpeed - targetSpeed)<accuracyThreshold;
+    }
+    public void postTelemetry(){
+        telemetry.addLine("----Flywheel Data");
+        telemetry.addData("FLYWHEELvelocity", currentSpeed);
+
     }
 
 }
