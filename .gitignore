@@ -24,6 +24,7 @@ out/
 .gradle/
 build/
 ./settings.gradle
+settings.gradle
 
 # Local configuration file (sdk path, etc)
 local.properties
