@@ -13,12 +13,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.Resources.PIDController;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Flywheel subsystem for controlling a shooter or similar mechanism.
@@ -26,14 +20,8 @@ import java.util.List;
  */
 @Config
 public class Flywheel implements Subsystem {
-    @Override
-    public void update(){
-    }
-    @Override
-    public void setDisabled(boolean disabled){
-    }
 
-    public static double p = 70;
+    public static double  p = 70;
     public static double i = 0;
     public static double d = 30;
     public static double f = 13.5;
@@ -44,13 +32,13 @@ public class Flywheel implements Subsystem {
     private Telemetry telemetry = null;
     // Timer for elapsed time tracking
     private ElapsedTime runtime = null;
-    // Target speed for the flywheel (degrees per second)
+    // Target speed for the flywheel (rotations per minute)
     private double targetSpeed = 0.0;
-    // Current speed of the flywheel (degrees per second)
+    // Current speed of the flywheel (rotations per minute)
     private double currentSpeed = 0.0;
     // The flywheel motor (DcMotorEx)
     private DcMotorEx flywheel = null;
-    // Acceptable error threshold for speed (degrees per second)
+    // Acceptable error threshold for speed (rotations per minute)
     private double accuracyThreshold;
 
     /**
@@ -76,10 +64,18 @@ public class Flywheel implements Subsystem {
         // Set PIDF coefficients for velocity control
         flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(p,i,d,f));
     }
+    @Override
+    public void update(){
+    }
+    @Override
+    public void setDisabled(boolean disabled){
+        flywheel.setPower(0);
+        return;
+    }
 
     /**
      * Sets the accuracy threshold for determining if the flywheel is at speed.
-     * @param threshold Acceptable error in degrees per second
+     * @param threshold Acceptable error in rotations per minute
      */
     public void setAccuracyThreshold(double threshold){
         accuracyThreshold = threshold;
@@ -87,7 +83,7 @@ public class Flywheel implements Subsystem {
 
     /**
      * Gets the current speed of the flywheel.
-     * @return Current speed in degrees per second
+     * @return Current speed in rotations per minute
      */
     public double getCurrentSpeed(){
         return currentSpeed;
@@ -95,7 +91,7 @@ public class Flywheel implements Subsystem {
 
     /**
      * Gets the target speed of the flywheel.
-     * @return Target speed in degrees per second
+     * @return Target speed in rotations per minute
      */
     public double getTargetSpeed()
     {
@@ -104,10 +100,11 @@ public class Flywheel implements Subsystem {
 
     /**
      * Sets the target speed for the flywheel and updates the motor velocity.
-     * @param degreesPerSecond Target speed in degrees per second
+     * @param rotationsPerMinute Target speed in rotations per minute
      */
-    public void setTargetSpeed(double degreesPerSecond){
-        targetSpeed = degreesPerSecond;
+    public void setTargetSpeed(double rotationsPerMinute){
+        //This is the convesation factor for angular rate so you can get it in rotations per minute
+        targetSpeed = 28*rotationsPerMinute*60;
         flywheel.setVelocity(targetSpeed);
     }
 

@@ -40,10 +40,10 @@ public class Drivetrain implements Subsystem {
      * @param telemetryEnabled Flag to enable or disable telemetry output
      */
     public Drivetrain(HardwareMap hardwareMap, Telemetry telemetry, boolean telemetryEnabled){
-        FLMotor = hardwareMap.get(DcMotor.class, "FLMotor");
-        FRMotor = hardwareMap.get(DcMotor.class, "FRMotor");
-        BLMotor = hardwareMap.get(DcMotor.class, "BLMotor");
-        BRMotor = hardwareMap.get(DcMotor.class, "BRMotor");
+        FLMotor = hardwareMap.get(DcMotor.class, "fl");
+        FRMotor = hardwareMap.get(DcMotor.class, "fr");
+        BLMotor = hardwareMap.get(DcMotor.class, "bl");
+        BRMotor = hardwareMap.get(DcMotor.class, "br");
 
         motors = new DcMotor[]{FLMotor,FRMotor,BLMotor,BRMotor};
         for (DcMotor motor: motors){
