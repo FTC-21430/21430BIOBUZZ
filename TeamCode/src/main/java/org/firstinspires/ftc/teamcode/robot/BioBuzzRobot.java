@@ -8,12 +8,15 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.automation.vision.HiveAprilTagsPortal;
 import org.firstinspires.ftc.teamcode.robot.actions.ExampleAction;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.robot.tuning.AprilTagCameraConfiguration;
 
 public class BioBuzzRobot extends SWEEPRobot {
     // Robot subsystems
     Drivetrain drivetrain;
+    HiveAprilTagsPortal hiveAprilTagsPortal;
     /**
      * Constructor for the SoftwareTestingBot class.
      * Initializes the robot's subsystems and takes FIRSTSDK bits
@@ -23,6 +26,7 @@ public class BioBuzzRobot extends SWEEPRobot {
     public BioBuzzRobot(HardwareMap hardwareMap, Telemetry telemetry){
         runtime = new ElapsedTime();
         this.drivetrain = new Drivetrain(hardwareMap, telemetry, false);
+        this.hiveAprilTagsPortal = new HiveAprilTagsPortal(telemetry, new AprilTagCameraConfiguration(hardwareMap));
         subsystems = new Subsystem[]{
                 drivetrain,
         };
@@ -34,6 +38,7 @@ public class BioBuzzRobot extends SWEEPRobot {
     @Override
     public void initialize() {
         drivetrain.enableFieldCentricDriving(false);
+        hiveAprilTagsPortal.InitProcessor();
     }
     /**
      * Updates the robot's subsystems and actions during teleop mode.
@@ -42,6 +47,7 @@ public class BioBuzzRobot extends SWEEPRobot {
     @Override
     public void teleopUpdate() {
         updateActions();
+        hiveAprilTagsPortal.updateProcess();
     }
     /**
      * Updates the robot's subsystems and actions during autonomous mode.
