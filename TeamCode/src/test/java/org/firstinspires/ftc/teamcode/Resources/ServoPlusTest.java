@@ -16,43 +16,4 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ServoPlusTest {
 
-    private static final double DELTA = 1e-9;
-
-    private ServoPlus servoPlus;
-
-    @Before
-    public void setUp() {
-    }
-
-    @Test
-    public void setServoPos_inRange_setsPositionAsAngleOverRangeOfMotion() {
-    }
-
-    @Test
-    public void setServoPos_belowMin_isClippedToMin() {
-    }
-
-    @Test
-    public void setServoPos_aboveMax_isClippedToMax() {
-    }
-
-    @Test
-    public void setServoPos_updatesStoredAngle() {
-    }
-
-    @Test
-    public void getServoPos_beforeAnySet_isZero() {
-    }
-
-    @Test
-    public void moveServoBy_addsToCurrentAngle() {
-    }
-
-    @Test
-    public void moveServoBy_pastMax_isClipped() {
-    }
-
-    @Test
-    public void moveServoBy_negative_movesBackward() {
-    }
 }

@@ -26,37 +26,4 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class BioBuzzRobotTest {
 
-    private BioBuzzRobot robot;
-
-    @Before
-    public void setUp() {
-    }
-
-    @Test
-    public void constructor_createsDrivetrain() {
-    }
-
-    @Test
-    public void constructor_registersDrivetrainAsSubsystem() {
-    }
-
-    @Test
-    public void initialize_disablesFieldCentricDriving() {
-    }
-
-    @Test
-    public void teleopUpdate_updatesActions() {
-    }
-
-    @Test
-    public void autonomousUpdate_updatesActions() {
-    }
-
-    @Test
-    public void exampleAction_withArgs_returnsActionForThisRobot() {
-    }
-
-    @Test
-    public void exampleAction_noArgs_usesDefaultTimeAndRange() {
-    }
 }
