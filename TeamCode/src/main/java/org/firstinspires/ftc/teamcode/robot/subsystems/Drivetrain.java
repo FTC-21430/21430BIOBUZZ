@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.robot.subsystems;
 import com.broombots.sweep.Classes.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -19,7 +18,7 @@ public class Drivetrain implements Subsystem {
     private DcMotor BLMotor;
     private DcMotor BRMotor;
     // Array to hold the motors for easier iteration
-    private final DcMotor[] motors;
+    private final DcMotor[] MOTORS;
     // Flag to enable or disable field-centric driving
     private boolean fieldCentricDrivingEnabled = false;
     // Variables to hold the desired movement vector and rotation, allows previous values to be stored and used in the update loop
@@ -45,10 +44,10 @@ public class Drivetrain implements Subsystem {
         BLMotor = hardwareMap.get(DcMotor.class, "BLMotor");
         BRMotor = hardwareMap.get(DcMotor.class, "BRMotor");
 
-        motors = new DcMotor[]{FLMotor,FRMotor,BLMotor,BRMotor};
-        for (DcMotor motor: motors){
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        MOTORS = new DcMotor[]{FLMotor,FRMotor,BLMotor,BRMotor};
+        for (DcMotor motor: MOTORS){
+//            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         this.telemetry = telemetry;
@@ -111,7 +110,7 @@ public class Drivetrain implements Subsystem {
     @Override
     public void setDisabled(boolean disable){
         if (disable){
-            for (DcMotor motor: motors){
+            for (DcMotor motor: MOTORS){
                 motor.setPower(0);
             }
         }
@@ -144,13 +143,13 @@ public class Drivetrain implements Subsystem {
                 forward + strafe - rotate  //BR
         };
         // Calculate the max power value out of all possible solutions
-        double maxPower = 0;
+        double maxPower = 1;
         for (double power : powers){
-            maxPower = Math.max(maxPower, power);
+            maxPower = Math.max(maxPower, Math.abs(power));
         }
         // Apply motor power normalized to the greatest possible value
         for (int i = 0; i < 4; i++){
-            motors[i].setPower(powers[i]/maxPower);
+            MOTORS[i].setPower(powers[i]/maxPower);
         }
     }
     /**

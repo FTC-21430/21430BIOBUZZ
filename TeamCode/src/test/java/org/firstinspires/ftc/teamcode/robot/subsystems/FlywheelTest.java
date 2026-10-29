@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
-import static org.junit.Assert.assertEquals;
+import  static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -11,14 +11,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.junit.After;
 import org.junit.Before;
@@ -36,7 +34,7 @@ public class FlywheelTest {
     private static final double DELTA = 1e-9;
 
     @Mock private HardwareMap hardwareMap;
-    @Mock private DcMotorEx motor;
+    @Mock private DcMotorEx flywheelMotor;
     @Mock private Telemetry telemetry;
     @Mock private ElapsedTime runtime;
     @Captor private ArgumentCaptor<PIDFCoefficients> pidfCaptor;
@@ -51,9 +49,9 @@ public class FlywheelTest {
         savedD = Flywheel.d;
         savedF = Flywheel.f;
 
-        when(hardwareMap.get(DcMotorEx.class, "flywheel")).thenReturn(motor);
+        when(hardwareMap.get(DcMotorEx.class, "flywheel")).thenReturn(flywheelMotor);
 
-        flywheel = new Flywheel(hardwareMap, telemetry, runtime, 70, 65, 45);
+        flywheel = new Flywheel(hardwareMap, telemetry, runtime, savedP, savedI, savedD);
     }
 
     @After
@@ -65,28 +63,28 @@ public class FlywheelTest {
     }
 
     private void runLoopWithMeasuredVelocity(double velocity) {
-        when(motor.getVelocity()).thenReturn(velocity);
+        when(flywheelMotor.getVelocity()).thenReturn(velocity);
         flywheel.updateSpeedControl();
     }
 
     @Test
-    public void constructor_getsFlywheelMotorByName() {
+    public void constructorGetsFlywheelMotorByName() {
         verify(hardwareMap).get(DcMotorEx.class, "flywheel");
     }
 
     @Test
-    public void constructor_configuresMotorInCorrectOrder() {
-        InOrder order = inOrder(motor);
-        order.verify(motor).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        order.verify(motor).setMotorEnable();
-        order.verify(motor).setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        order.verify(motor).setDirection(DcMotorSimple.Direction.REVERSE);
-        order.verify(motor).setPIDFCoefficients(eq(DcMotor.RunMode.RUN_USING_ENCODER), any(PIDFCoefficients.class));
+    public void constructorConfiguresMotorInCorrectOrder() {
+        InOrder order = inOrder(flywheelMotor);
+        order.verify(flywheelMotor).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        order.verify(flywheelMotor).setMotorEnable();
+        order.verify(flywheelMotor).setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        order.verify(flywheelMotor).setDirection(DcMotorSimple.Direction.REVERSE);
+        order.verify(flywheelMotor).setPIDFCoefficients(eq(DcMotor.RunMode.RUN_USING_ENCODER), any(PIDFCoefficients.class));
     }
 
     @Test
-    public void constructor_appliesStaticDashboardPidf() {
-        verify(motor).setPIDFCoefficients(eq(DcMotor.RunMode.RUN_USING_ENCODER), pidfCaptor.capture());
+    public void constructorAppliesStaticDashboardPIDF() {
+        verify(flywheelMotor).setPIDFCoefficients(eq(DcMotor.RunMode.RUN_USING_ENCODER), pidfCaptor.capture());
         PIDFCoefficients applied = pidfCaptor.getValue();
 
         assertEquals(Flywheel.p, applied.p, DELTA);
@@ -96,7 +94,7 @@ public class FlywheelTest {
     }
 
     @Test
-    public void constructor_ignoresPidArgumentsAndUsesStaticFields() {
+    public void constructorIgnoresPidArgumentsAndUsesStaticFields() {
         Flywheel.p = 1;
         Flywheel.i = 2;
         Flywheel.d = 3;
@@ -104,7 +102,7 @@ public class FlywheelTest {
 
         new Flywheel(hardwareMap, telemetry, runtime, 70, 65, 45);
 
-        verify(motor, times(2)).setPIDFCoefficients(eq(DcMotor.RunMode.RUN_USING_ENCODER), pidfCaptor.capture());
+        verify(flywheelMotor, times(2)).setPIDFCoefficients(eq(DcMotor.RunMode.RUN_USING_ENCODER), pidfCaptor.capture());
         PIDFCoefficients applied = pidfCaptor.getValue();
         assertEquals(1, applied.p, DELTA);
         assertEquals(2, applied.i, DELTA);
@@ -113,63 +111,63 @@ public class FlywheelTest {
     }
 
     @Test
-    public void constructor_startsWithZeroTargetAndCurrentSpeed() {
+    public void constructorStartsWithZeroTargetAndCurrentSpeed() {
         assertEquals(0.0, flywheel.getTargetSpeed(), DELTA);
         assertEquals(0.0, flywheel.getCurrentSpeed(), DELTA);
     }
 
     @Test
-    public void constructor_doesNotPostTelemetryOrUseRuntime() {
+    public void constructorDoesNotPostTelemetryOrUseRuntime() {
         verifyNoInteractions(telemetry, runtime);
     }
 
     @Test
-    public void setTargetSpeed_storesTarget() {
+    public void setTargetSpeedStoresTarget() {
         flywheel.setTargetSpeed(1200);
 
         assertEquals(1200, flywheel.getTargetSpeed(), DELTA);
     }
 
     @Test
-    public void setTargetSpeed_commandsMotorVelocityImmediately() {
+    public void setTargetSpeedCommandsMotorVelocityImmediately() {
         flywheel.setTargetSpeed(1200);
 
-        verify(motor).setVelocity(1200.0);
+        verify(flywheelMotor).setVelocity(1200.0);
     }
 
     @Test
-    public void setTargetSpeed_zero_commandsStop() {
+    public void setTargetSpeedZeroCommandsStop() {
         flywheel.setTargetSpeed(1200);
         flywheel.setTargetSpeed(0);
 
-        verify(motor).setVelocity(0.0);
+        verify(flywheelMotor).setVelocity(0.0);
         assertEquals(0.0, flywheel.getTargetSpeed(), DELTA);
     }
 
     @Test
-    public void setTargetSpeed_doesNotChangeMeasuredSpeed() {
+    public void setTargetSpeedDoesNotChangeMeasuredSpeed() {
         flywheel.setTargetSpeed(1200);
 
         assertEquals(0.0, flywheel.getCurrentSpeed(), DELTA);
     }
 
     @Test
-    public void updateSpeedControl_readsMotorVelocityIntoCurrentSpeed() {
+    public void updateSpeedControlReadsMotorVelocityIntoCurrentSpeed() {
         runLoopWithMeasuredVelocity(1150);
 
         assertEquals(1150, flywheel.getCurrentSpeed(), DELTA);
     }
 
     @Test
-    public void updateSpeedControl_reappliesTargetVelocity() {
+    public void updateSpeedControlReappliesTargetVelocity() {
         flywheel.setTargetSpeed(1200);
         runLoopWithMeasuredVelocity(1150);
 
-        verify(motor, times(2)).setVelocity(1200.0);
+        verify(flywheelMotor, times(2)).setVelocity(1200.0);
     }
 
     @Test
-    public void updateSpeedControl_appliesLatestDashboardPidf() {
+    public void updateSpeedControlAppliesLatestDashboardPIDF() {
         Flywheel.p = 80;
         Flywheel.i = 1;
         Flywheel.d = 25;
@@ -177,7 +175,7 @@ public class FlywheelTest {
 
         runLoopWithMeasuredVelocity(0);
 
-        verify(motor, times(2)).setPIDFCoefficients(eq(DcMotor.RunMode.RUN_USING_ENCODER), pidfCaptor.capture());
+        verify(flywheelMotor, times(2)).setPIDFCoefficients(eq(DcMotor.RunMode.RUN_USING_ENCODER), pidfCaptor.capture());
         PIDFCoefficients applied = pidfCaptor.getValue();
         assertEquals(80, applied.p, DELTA);
         assertEquals(1, applied.i, DELTA);
@@ -186,14 +184,14 @@ public class FlywheelTest {
     }
 
     @Test
-    public void updateSpeedControl_postsVelocityTelemetry() {
+    public void updateSpeedControlPostsVelocityTelemetry() {
         runLoopWithMeasuredVelocity(1150);
 
         verify(telemetry).addData("FLYWHEELvelocity", 1150.0);
     }
 
     @Test
-    public void isAtSpeed_belowTargetWithinThreshold_isTrue() {
+    public void isAtSpeedBelowTargetWithinThresholdIsTrue() {
         flywheel.setAccuracyThreshold(50);
         flywheel.setTargetSpeed(1200);
         runLoopWithMeasuredVelocity(1180);
@@ -202,7 +200,7 @@ public class FlywheelTest {
     }
 
     @Test
-    public void isAtSpeed_aboveTargetWithinThreshold_isTrue() {
+    public void isAtSpeedAboveTargetWithinThresholdIsTrue() {
         flywheel.setAccuracyThreshold(50);
         flywheel.setTargetSpeed(1200);
         runLoopWithMeasuredVelocity(1220);
@@ -211,7 +209,7 @@ public class FlywheelTest {
     }
 
     @Test
-    public void isAtSpeed_outsideThreshold_isFalse() {
+    public void isAtSpeedOutsideThresholdIsFalse() {
         flywheel.setAccuracyThreshold(50);
         flywheel.setTargetSpeed(1200);
         runLoopWithMeasuredVelocity(1100);
@@ -220,7 +218,7 @@ public class FlywheelTest {
     }
 
     @Test
-    public void isAtSpeed_exactlyOnThreshold_isFalse() {
+    public void isAtSpeedExactlyOnThresholdIsFalse() {
         flywheel.setAccuracyThreshold(50);
         flywheel.setTargetSpeed(1200);
         runLoopWithMeasuredVelocity(1150);
@@ -229,7 +227,7 @@ public class FlywheelTest {
     }
 
     @Test
-    public void isAtSpeed_thresholdNeverSet_isAlwaysFalse() {
+    public void isAtSpeedThresholdNeverSetIsAlwaysFalse() {
         flywheel.setTargetSpeed(1200);
         runLoopWithMeasuredVelocity(1200);
 
@@ -237,7 +235,7 @@ public class FlywheelTest {
     }
 
     @Test
-    public void isAtSpeed_usesLastMeasuredSpeed_requiresUpdateSpeedControl() {
+    public void isAtSpeedUsesLastMeasuredSpeedRequiresUpdateSpeedControl() {
         flywheel.setAccuracyThreshold(50);
         flywheel.setTargetSpeed(1200);
 
@@ -245,21 +243,21 @@ public class FlywheelTest {
     }
 
     @Test
-    public void update_currentlyDoesNothing() {
-        clearInvocations(motor, telemetry);
+    public void updateCurrentlyDoesNothing() {
+        clearInvocations(flywheelMotor, telemetry);
 
         flywheel.update();
 
-        verifyNoInteractions(motor, telemetry);
+        verifyNoInteractions(flywheelMotor, telemetry);
     }
 
     @Test
-    public void setDisabled_currentlyDoesNotStopMotor() {
+    public void setDisabledCurrentlyDoesNotStopMotor() {
         flywheel.setTargetSpeed(1200);
-        clearInvocations(motor);
+        clearInvocations(flywheelMotor);
 
         flywheel.setDisabled(true);
 
-        verifyNoInteractions(motor);
+        verifyNoInteractions(flywheelMotor);
     }
 }
