@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.robot.subsystems;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -56,7 +58,7 @@ public class DrivetrainTest {
     }
 
     @Test
-    public void checkForwardOnlyAllMotorsEqualPower() {
+    public void updateSetsEqualPowerForForwardInput() {
         drivetrain.enableFieldCentricDriving(false);
         drivetrain.updateMovementVector(1, 0, 0);
         drivetrain.update();
@@ -71,7 +73,7 @@ public class DrivetrainTest {
     }
 
     @Test
-    public void checkStrafeAppliesMecanumSigns() {
+    public void updateAppliesMecanumSignsForStrafeInput() {
         drivetrain.enableFieldCentricDriving(false);
         drivetrain.updateMovementVector(0, 1, 0);
         drivetrain.update();
@@ -95,12 +97,12 @@ public class DrivetrainTest {
     }
 
     @Test
-    public void checkRotateAppliesMecanumSigns() {
+    public void updateAppliesMecanumSignsForRotationInput() {
         drivetrain.enableFieldCentricDriving(false);
         drivetrain.updateMovementVector(0, 0, 1);
         drivetrain.update();
         for (DcMotor motor : MOTORS) {
-            if (motor == FLMotor || motor == BRMotor) {
+            if (motor == FLMotor || motor == BLMotor) {
                 verify(motor).setPower(1);
             } else {
                 verify(motor).setPower(-1);
@@ -109,7 +111,7 @@ public class DrivetrainTest {
         drivetrain.updateMovementVector(0, 0, -1);
         drivetrain.update();
         for (DcMotor motor : MOTORS) {
-            if (motor == FLMotor || motor == BRMotor) {
+            if (motor == FLMotor || motor == BLMotor) {
                 verify(motor).setPower(-1);
             } else {
                 verify(motor).setPower(1);
@@ -118,7 +120,7 @@ public class DrivetrainTest {
     }
 
     @Test
-    public void checkCombinedInputNormalization() {
+    public void updateNormalizesCombinedInputs() {
         drivetrain.enableFieldCentricDriving(false);
         drivetrain.updateMovementVector(1, 1, 1);
         drivetrain.update();
@@ -135,7 +137,7 @@ public class DrivetrainTest {
     }
 
     @Test
-    public void checkSmallInputScaling() {
+    public void updatePreservesPowerForInputsBelowMaximum() {
         drivetrain.enableFieldCentricDriving(false);
         drivetrain.updateMovementVector(0.25, 0.25, 0.25);
         drivetrain.update();
@@ -152,7 +154,7 @@ public class DrivetrainTest {
     }
 
     @Test
-    public void checkZeroInputSetsZeroPower() {
+    public void updateSetsZeroPowerForZeroInput() {
         drivetrain.enableFieldCentricDriving(false);
         drivetrain.updateMovementVector(0, 0, 0);
         drivetrain.update();
@@ -162,20 +164,26 @@ public class DrivetrainTest {
     }
 
     @Test
-    public void checkFieldCentricEnabledRotatesVectorByRobotYaw() {
+    public void updateTransformsInputWhenFieldCentricDrivingIsEnabled() {
         drivetrain.enableFieldCentricDriving(true);
         drivetrain.updateMovementVector(1, 0, 0, 45);
 
         drivetrain.update();
 
-        verify(FLMotor).setPower(1);
-        verify(FRMotor).setPower(0);
-        verify(BLMotor).setPower(0);
-        verify(BRMotor).setPower(1);
+        assertMotorPower(FLMotor, 1);
+        assertMotorPower(FRMotor, 0);
+        assertMotorPower(BLMotor, 0);
+        assertMotorPower(BRMotor, 1);
+    }
+
+    private void assertMotorPower(DcMotor motor, double expectedPower) {
+        ArgumentCaptor<Double> powerCaptor = ArgumentCaptor.forClass(Double.class);
+        verify(motor).setPower(powerCaptor.capture());
+        assertEquals(expectedPower, powerCaptor.getValue(), 1e-9);
     }
 
     @Test
-    public void checkDisabledTrueSetsAllMotorsToZero() {
+    public void setDisabledStopsAllMotorsWhenDisabled() {
         drivetrain.setDisabled(true);
         drivetrain.updateMovementVector(1, 1, 1);
         drivetrain.update();
@@ -185,7 +193,7 @@ public class DrivetrainTest {
     }
 
     @Test
-    public void checkDisabledFalseAfterTrueDriveResumes() {
+    public void updateResumesDrivingAfterReenabled() {
 
         drivetrain.setDisabled(true);
         drivetrain.updateMovementVector(1, 1, 1);
