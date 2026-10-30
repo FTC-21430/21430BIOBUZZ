@@ -1,8 +1,20 @@
 package org.firstinspires.ftc.teamcode.automation.vision;
 
+import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.vision.apriltag.AprilTagClusterDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.teamcode.automation.vision.HiveAprilTagsPortal.CELLS;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseRaw;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 public class HiveCellDetection {
     AprilTagClusterDetection clusterDetection;
@@ -15,9 +27,13 @@ public class HiveCellDetection {
     private final CELLS CELL_TYPE;
     private final int X_SIGN;
     private final int Y_SIGN;
+    private final OpenGLMatrix cameraToTurretZeroTransformation;
+    private final OpenGLMatrix turretToRobotTransformation;
 
-    public HiveCellDetection(AprilTagClusterDetection clusterDetection){
+    public HiveCellDetection(AprilTagClusterDetection clusterDetection, OpenGLMatrix cameraToTurretAtZeroTransformation, OpenGLMatrix turretToRobotTransformation){
         this.clusterDetection = clusterDetection;
+        this.cameraToTurretZeroTransformation = cameraToTurretAtZeroTransformation;
+        this.turretToRobotTransformation = turretToRobotTransformation;
         switch (clusterDetection.metadata.shortName){
             case ("RED SCORING"):
                 CELL_TYPE = CELLS.RED_NEGATIVE;
@@ -40,15 +56,58 @@ public class HiveCellDetection {
                 Y_SIGN = -1;
         }
     }
-    public AprilTagPoseFtc getRawPos(){
-        return clusterDetection.ftcPose;
+    public AprilTagPoseRaw getRawPose(){
+        return clusterDetection.rawPose;
     }
-    public AprilTagPoseFtc getFieldPose(){
-        double x = CELL_PIVOT_TO_OPEN_HYPOT * Math.cos(clusterDetection.ftcPose.pitch + CELL_ANGLE_TO_OPEN * -X_SIGN) * X_SIGN;
-        double y = HIVE_Y_OFFSET * Y_SIGN;
-        double z = CELL_PIVOT_TO_OPEN_HYPOT * Math.sin(clusterDetection.ftcPose.pitch + CELL_ANGLE_TO_OPEN * -X_SIGN) * Y_SIGN + FRAME_PIVOT_HEIGHT_FROM_GROUND;
+    public Pose3D getFieldPose(double turretAngle){
+        Orientation tagOrientationToCamera = Orientation.getOrientation(clusterDetection.rawPose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
+        OpenGLMatrix cameraToTag = OpenGLMatrix.identityMatrix()
+                .translated(
+                        (float)clusterDetection.rawPose.x,
+                        (float)clusterDetection.rawPose.y,
+                        (float)clusterDetection.rawPose.z)
+                .multiplied(tagOrientationToCamera.getRotationMatrix());
+        OpenGLMatrix tagToRobot = cameraToTag
+                .multiplied(cameraToTurretZeroTransformation.rotated(AngleUnit.DEGREES,(float)turretAngle,0.0F,0.0F,1F))
+                .multiplied(turretToRobotTransformation);
 
-        return new AprilTagPoseFtc(x, y, z, clusterDetection.ftcPose.roll, clusterDetection.ftcPose.pitch, clusterDetection.ftcPose.yaw, clusterDetection.ftcPose.range,clusterDetection.ftcPose.elevation,clusterDetection.ftcPose.range);
+        Orientation HiveToRobot = Orientation.getOrientation(
+                tagToRobot.inverted(),
+                AxesReference.EXTRINSIC,
+                AxesOrder.XYZ,
+                AngleUnit.DEGREES
+        );
+        double HivePitch = HiveToRobot.secondAngle;
+
+        double hiveX = CELL_PIVOT_TO_OPEN_HYPOT * Math.cos(HivePitch + CELL_ANGLE_TO_OPEN) * X_SIGN;
+        double hiveY = HIVE_Y_OFFSET * Y_SIGN;
+        double hiveZ = CELL_PIVOT_TO_OPEN_HYPOT * Math.sin(HivePitch + CELL_ANGLE_TO_OPEN) + FRAME_PIVOT_HEIGHT_FROM_GROUND;
+
+        Orientation CompositeHiveOrientation = new Orientation(AxesReference.INTRINSIC, AxesOrder.XYZ,AngleUnit.DEGREES,0,(float)HivePitch,0,0);
+
+        OpenGLMatrix worldToHive = OpenGLMatrix.identityMatrix()
+                .translated((float)hiveX, (float)hiveY, (float)hiveZ)
+                .multiplied(CompositeHiveOrientation.getRotationMatrix());
+
+        OpenGLMatrix worldToRobot = worldToHive
+                .multiplied(tagToRobot);
+        VectorF translation = worldToRobot.getTranslation();
+        Orientation orientation = Orientation.getOrientation(worldToRobot, AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+        Pose3D result = new Pose3D(
+                new Position(
+                        DistanceUnit.INCH,
+                        translation.get(0),
+                        translation.get(1),
+                        translation.get(2),
+                        0),
+                new YawPitchRollAngles(AngleUnit.DEGREES,
+                        orientation.firstAngle,
+                        orientation.secondAngle,
+                        orientation.thirdAngle,
+                        0)
+        );
+        return result;
     }
     public boolean isTipping(){
         // TODO
