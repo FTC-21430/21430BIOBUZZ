@@ -1,6 +1,6 @@
  package org.firstinspires.ftc.teamcode.robot.subsystems;
 
-//import com.broombots.sweep.Classes.LocalizationPacket;
+import com.broombots.sweep.Classes.LocalizationPacket;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -134,8 +134,8 @@ public class GobildaPinpointModuleFirmware {
         pinpoint.recalibrateIMU();
     }
 
-//    public LocalizationPacket getLocalizationPacket(){
-//        return new LocalizationPacket(getRobotX(),getRobotY(),getRobotAngle(),getVelocityX(),getVelocityY());
-//    }
+    public LocalizationPacket getLocalizationPacket(){
+        return new LocalizationPacket(getRobotX(),getRobotY(),getRobotAngle(),getVelocityX(),getVelocityY());
+    }
 }
 
