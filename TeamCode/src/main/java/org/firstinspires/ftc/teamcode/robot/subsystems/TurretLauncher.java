@@ -13,32 +13,37 @@ public class TurretLauncher {
 //        }
     //TODO: need turret class
 
-//        public void setTurretAngle(double angle) {
+        public void setTurretAngle(double angle) {
 //                turret.setTargetAngle(angle);
-//        }
+        }
 //        public void setHoodAngle(double angle) {
 //                launcherRamp.setLaunchAngle(angle);
 //        }
     //TODO: need to add flywheel class
 
-//        public void setFlywheelSpeed(double speed) {
+        public void setFlywheelSpeed(double speed) {
 //                flywheel.setTargetSpeed(speed);
+        }
     //TODO:  need to add turret class
 
-//        public double getTurretAngle() {
+        public double getTurretAngle() {
 //                return turret.getCurrentAngle();
-//        }
-//        public double getHoodAngle() {
+            return 0;
+        }
+        public double getHoodAngle() {
 //                return launcherRamp.getCurrentAngle();
-//        }
+            return 0;
+        }
     //TODO: need flywheel class
 
-//        public double getFlywheelSpeed() {
+        public double getFlywheelSpeed() {
 //            return flywheel.getCurrentSpeed();
-//        }
+            return 0;
+        }
     //TODO: add the functions to flywheel and turret when added
 
-//        public boolean isReadyToFire(){
+        public boolean isReadyToFire(){
 //            return flywheel.isAtTargetSpeed() && launcherRamp.isAtTargetAngle() && turret.isAtTargetAngle();
-//        }
+            return false;
+        }
 }
