@@ -13,10 +13,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  */
 public class Drivetrain implements Subsystem {
     // Motor declarations for the four mecanum wheels
-    private DcMotor FLMotor;
-    private DcMotor FRMotor;
-    private DcMotor BLMotor;
-    private DcMotor BRMotor;
+    private final DcMotor FLMotor;
+    private final DcMotor FRMotor;
+    private final DcMotor BLMotor;
+    private final DcMotor BRMotor;
     // Array to hold the motors for easier iteration
     private final DcMotor[] motors;
     // Flag to enable or disable field-centric driving
@@ -26,7 +26,7 @@ public class Drivetrain implements Subsystem {
     // Variable to hold the robot's current yaw angle, used for field-centric calculations
     private double robotYaw = 0; // From localization values, used to transform values to field centric
     // Telemetry object for sending data to the driver station
-    private Telemetry telemetry;
+    private final Telemetry telemetry;
     // Flag to enable or disable telemetry output
     private boolean telemetryEnabled = false;
     // Flag to indicate if the subsystem is disabled
@@ -39,10 +39,10 @@ public class Drivetrain implements Subsystem {
      * @param telemetryEnabled Flag to enable or disable telemetry output
      */
     public Drivetrain(HardwareMap hardwareMap, Telemetry telemetry, boolean telemetryEnabled){
-        FLMotor = hardwareMap.get(DcMotor.class, "FLMotor");
-        FRMotor = hardwareMap.get(DcMotor.class, "FRMotor");
-        BLMotor = hardwareMap.get(DcMotor.class, "BLMotor");
-        BRMotor = hardwareMap.get(DcMotor.class, "BRMotor");
+        FLMotor = hardwareMap.get(DcMotor.class, "fl");
+        FRMotor = hardwareMap.get(DcMotor.class, "fr");
+        BLMotor = hardwareMap.get(DcMotor.class, "bl");
+        BRMotor = hardwareMap.get(DcMotor.class, "br");
 
         motors = new DcMotor[]{FLMotor,FRMotor,BLMotor,BRMotor};
         for (DcMotor motor: motors){

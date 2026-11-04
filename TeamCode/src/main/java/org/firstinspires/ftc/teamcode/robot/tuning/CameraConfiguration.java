@@ -10,11 +10,11 @@ import java.util.ArrayList;
 
 public abstract class CameraConfiguration {
     private final WebcamName NAME;
-    private Size cameraResolution;
+    private final Size cameraResolution;
     // fx, fy, cx, cy
-    private ArrayList<Double> lensIntrinsics;
-    private Position cameraPosition;
-    private YawPitchRollAngles cameraOrientation;
+    private final ArrayList<Double> lensIntrinsics;
+    private final Position cameraPosition;
+    private final YawPitchRollAngles cameraOrientation;
     public CameraConfiguration(WebcamName name, ArrayList<Double> lensIntrinsics, Size cameraResolution, Position cameraPosition, YawPitchRollAngles cameraOrientation){
         if (name == null) {
             throw new IllegalArgumentException("name cannot be null");

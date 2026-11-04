@@ -1,0 +1,129 @@
+The Official BroomBot Style Guide
+2026–2027 Bio Buzz Season ©
+This code is meant to be read. If something is important enough for the team to care about, follow the freaking style guide. Code must be Style Guide Compliant™ before a Pull Request can be accepted into the master branch.
+Want to break a rule? Talk to the team either in a meeting or in the software channel on Slack. Technical exceptions are encouraged when justified.
+General
+Spell words correctly. Fake words and puns require team-approved spelling, which becomes permanent until changed by the team.
+Team created words should be defined in the repository README file.
+Use whitespace to separate sections, methods, and classes. Avoid more than two blank lines.
+Explain non-universal abbreviations. Put definitions in the software README or a separate documentation file.
+Variables
+Variables: camelCase
+Constants: SCREAMING_SNAKE_CASE
+Class attributes: private unless needed for FTC Dashboard; add a comment explaining why. Enums that need to be used elsewhere can be public.
+In other situations, add comments surrounding these things which need special permissions.
+Names must clearly describe their purpose and distinguish themselves from other variables.
+Example: powerMtrXYZ
+Do not do: power
+Comments
+Explain variables when their purpose isn't obvious from the name.
+Variables and Methods should have their units specified, (EX: double value = 20; // inches) on the same line, or in a javadoc comment
+Document methods, including their purpose, arguments, and important behavior.
+Explain significant logic, such as complex if statements.
+Master branch shall not contain commented-out code or todo comments . Exceptions are on a case by case basis.
+At Review for a Pull Request into the Master branch, TODOs must be removed and created as Git issues.
+Keep comments concise.
+ JavaDoc comments are used for summaries or explanations of the class, inLine comments are used to explain the exact process of the code.
+
+
+Classes & Methods
+Classes and display names: PascalCase
+Methods: camelCase
+Autonomous names should follow the format: Color, starting configuration, main descriptor, elements score ex: RedFarCornerCycle18
+Teleop mode names should follow the format: (optional: color, other details) ex: RedTeleop, MainTeleop
+Utility Opmode names should follow the format: Mechanism, Test, Other Specifics. Ex: ArmTesting
+Opmodes shall be Driver Station grouped by Opmode type (auto, teleop, utility), color, and whether the mode is used in competition or in casual settings.
+
+Standard Units
+Rotation shall be in degrees. Convert to radians only when required by a library or operation.
+Lengths shall  be in inches.
+Time shall be evaluated in Seconds.
+GitHub
+Branches: ideally snake_case
+Pull requests: descriptive Title Case names with concise descriptions. AI is allowed to help write them, but should be fact checked prior to submitting a Pull Request.
+At least one other person must review code before merging into the master branch.
+AI (Artificial Intelligence)
+AI may be used for:
+Writing comments
+Writing commits
+Testing
+Explaining confusing code
+Debugging
+Other purposes with mentor/Software Lead  approval
+Software Documentation
+AI may not be used for:
+Creating Code
+Creating portfolio images
+When in doubt, don’t.
+Ai is a tool that should support learning, not replace coding experience or form as a shortcut from work.
+
+
+File Structure
+All classes should be formatted as the following:
+Package declaration
+Import statements
+Optional ( Header Comments )
+Class Declaration
+Static attributes or enums
+Public Attributes (in order of relevance)
+Private Attributes (in order of relevance)
+Class Constructor
+Public Methods (in order of relevance)
+Private Methods for important algorithms
+Private Methods for Unit conversions or simple algorithms
+
+Amendment Process
+The style guide may be amended by:
+Majority vote of team
+The style guide shall be reviewed for amendment prior to kickoff every season.
+
+
+The code repository is formatted as follows:
+RobotController
+Sample OpModes
+Internal FIRST SDK
+TeamCode
+Robot
+SeasonRobotMasterClass (extends SWEEPRobot.java)
+Localization
+SeasonSWEEPRobotMovementParameters
+Subsystems
+Drivetrain
+(All of the robot’s subsystem classes)
+(Any Sensors)
+(Motors)
+Resources
+PIDController
+PIDFController
+ServoPlus
+Opmodes
+Teleop
+RedTeleop
+BlueTeleop
+GenericTeleop
+DemoTeleop ( off of the ftc field )
+Autonomous
+RedFar18
+BlueFar18
+Utility
+SWEEPTuning
+DrivetrainTesting
+( sensor testing, motor testing, or individual test op modes for each subsystem )
+InitializationTest
+FullSystemCalibrationAndSelfDiagnostics
+SWEEP
+Comm
+(anything else that involves SWEEP or its library that needs to be here)
+SWEEPCore
+Builder
+(Algorithms behind building paths and rendering the motor profiles)
+Classes
+(Classes used throughout SWEEP Internals and usage)
+Defaults
+(Default settings instead of custom)
+Movement
+(Make the robot move to follow a path)
+Splines
+(Classes for all of the different types of waypoints)
+Segments
+

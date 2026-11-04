@@ -38,7 +38,7 @@ public class BioBuzzRobot extends SWEEPRobot {
     @Override
     public void initialize() {
         drivetrain.enableFieldCentricDriving(false);
-        hiveAprilTagsPortal.InitProcessor();
+        hiveAprilTagsPortal.initProcessor();
     }
     /**
      * Updates the robot's subsystems and actions during teleop mode.
@@ -47,7 +47,7 @@ public class BioBuzzRobot extends SWEEPRobot {
     @Override
     public void teleopUpdate() {
         updateActions();
-        hiveAprilTagsPortal.updateProcess();
+        hiveAprilTagsPortal.updateProcess(0, runtime.seconds(), true);
     }
     /**
      * Updates the robot's subsystems and actions during autonomous mode.
@@ -60,6 +60,9 @@ public class BioBuzzRobot extends SWEEPRobot {
     // Subsystem getters
     public Drivetrain getDrivetrain() {
         return drivetrain;
+    }
+    public HiveAprilTagsPortal getHiveAprilTagsPortal() {
+        return hiveAprilTagsPortal;
     }
     // Robot action definitions
     /**
