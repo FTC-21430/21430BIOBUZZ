@@ -33,7 +33,7 @@ public class AprilTagCameraConfiguration extends CameraConfiguration{
 
     // NOTE THAT APRILTAG REFERENCE FRAME HAS X+ = angle 0, Make sure that X+ is toward intakes and Y+ is facing the hubs.
 
-    //TODO - currently configured for the software testing bot, remember to update values during integration with target hardware
+    //TODO - currently configured for the software testing bot, remember to update values during integration with target hardware. See https://github.com/FTC-21430/21430BIOBUZZ/issues/20
     public static double turretToCameraPosX = -2.0;
     public static double turretToCameraPosY = 0.0;
     public static double turretToCameraPosZ = 3.0;
