@@ -100,7 +100,7 @@ public class HiveCellDetection {
                 .multiplied(cameraToTurretZeroTransformation)
                 .multiplied(rawPoseMatrix())
                 .multiplied(tagAxesFromFieldAxes.inverted());
-
+        //TODO make the matrix multiplication labels better, and check signs and exact math.
         // The robot is planar with the floor, so the tag's tilt relative to the robot is the hive pitch.
         double hivePitchRad = PITCH_SIGN * Math.asin(clamp(-robotToTag.get(2, 0)));
         double hivePitchDeg = Math.toDegrees(hivePitchRad);

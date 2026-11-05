@@ -45,7 +45,7 @@ public class HiveAprilTagsPortal {
     private final OpenGLMatrix turretToRobotTransformation;
     // Latest averaged robot pose on the field; stays at the origin until the first detection.
     private Pose3D resultingLocalization = new Pose3D(new Position(DistanceUnit.INCH,0,0,0,0),new YawPitchRollAngles(AngleUnit.DEGREES, 0,0,0,0));
-
+    private ArrayList<Pose3D> hivePositions = new ArrayList<>();
 
     /**
      * Builds the fixed camera-to-turret and turret-to-robot transformations from the tuned camera configuration.
@@ -147,6 +147,7 @@ public class HiveAprilTagsPortal {
         }
 
         ArrayList<Pose3D> poses = new ArrayList<>();
+        hivePositions.clear();
         for (HiveCellDetection detection : hiveCellDetections){
             // Post debug telemetry log of the raw cluster position relative to the camera.
             if (withTelemetry) {
@@ -155,8 +156,8 @@ public class HiveAprilTagsPortal {
                 Orientation rawOrientation = Orientation.getOrientation(detection.getRawPose().R, AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
                 telemetry.addLine(String.format("pyr (degrees): %.2f, %.2f, %.2f", rawOrientation.firstAngle, rawOrientation.secondAngle, rawOrientation.thirdAngle));
             }
-
             poses.add(detection.getFieldPose(turretAngle));
+            hivePositions.add(detection.getHivePosition());
         }
         // sum every component of every pose, then divide by the count below to average them
         double i = 0;
@@ -187,6 +188,7 @@ public class HiveAprilTagsPortal {
         roll /= i;
 
         resultingLocalization = new Pose3D(new Position(DistanceUnit.INCH, x, y, z, acquisitionTime), new YawPitchRollAngles(AngleUnit.DEGREES, yaw, pitch, roll, acquisitionTime));
+
     }
 
     /**
@@ -195,5 +197,8 @@ public class HiveAprilTagsPortal {
      */
     public LocalizationPacket getLocalizationPacket(){
         return new LocalizationPacket(resultingLocalization.getPosition().x,resultingLocalization.getPosition().y,resultingLocalization.getOrientation().getYaw(AngleUnit.DEGREES),0,0);
+    }
+    public ArrayList<Pose3D> getHivePositions(){
+        return hivePositions;
     }
 }
