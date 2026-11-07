@@ -21,8 +21,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class Flywheel implements Subsystem {
 
-    public static double f = 13.5;
-
     // Hardware map for accessing robot hardware
     private HardwareMap hardwareMap = null;
     // Telemetry for reporting data to the driver station
@@ -112,6 +110,9 @@ public class Flywheel implements Subsystem {
     public void updateSpeedControl(){
         flywheel.setVelocity(targetSpeed);
         currentSpeed = flywheel.getVelocity();
+    }
+    public void setPIDFCoefficients(double p, double i, double d, double f){
+        flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(p, i, d,f));
     }
 
     /**
