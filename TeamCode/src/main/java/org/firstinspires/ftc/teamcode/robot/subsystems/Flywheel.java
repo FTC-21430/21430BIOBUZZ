@@ -37,12 +37,10 @@ public class Flywheel implements Subsystem {
     private DcMotorEx flywheel = null;
     // Acceptable error threshold for speed (rotations per minute)
     private double accuracyThreshold;
-    private final int POLLEN_P  = 70;
-    private final int NECTAR_P= 50;
-    private final int POLLEN_I = 65;
-    private final int NECTAR_I = 40;
-    private final int POLLEN_D = 45;
-    private final int NECTAR_D =65;
+    int p= 0;
+
+    int i = 0;
+    int d= 0;
     private boolean isDisabled = false;
 
     /**
@@ -50,23 +48,18 @@ public class Flywheel implements Subsystem {
      * @param hardwareMap HardwareMap for accessing hardware devices
      * @param telemetry Telemetry for reporting data
      * @param runtime ElapsedTime instance for timing
-     * @param isPollen Determines if it is pollen or nectar
      */
-    public Flywheel(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime runtime,Boolean isPollen){
+    public Flywheel(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime runtime, String hardwareAddress) {
         this.telemetry = telemetry;
         this.runtime = runtime;
 
         // Initialize the flywheel motor
-        flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
+        flywheel = hardwareMap.get(DcMotorEx.class, hardwareAddress);
         flywheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         flywheel.setMotorEnable();
         flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
-        if(isPollen){
-            flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(POLLEN_P,POLLEN_I,POLLEN_D,0));
-        }else {
-            flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(NECTAR_P,NECTAR_I,NECTAR_D,0));
-        }
+        flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(p, i, d, 0));
     }
     @Override
     public void setDisabled(boolean disabled){
@@ -134,4 +127,19 @@ public class Flywheel implements Subsystem {
 
     }
 
+    public void setPIDFCoeffs(int p, int i, int d){
+        this.p = p;
+        this.i = i;
+        this.d = d;
+        flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(p, i, d, 0));
+    }
+    public int getP() {
+        return p;
+    }
+    public int getI(){
+        return i;
+    }
+    public int getD(){
+        return d;
+    }
 }
