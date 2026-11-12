@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.broombots.sweep.Classes.Coordinate;
 import com.broombots.sweep.Classes.Pos2D;
 import com.broombots.sweep.Classes.SWEEPRobot;
 import com.broombots.sweep.Classes.Subsystem;
@@ -11,14 +10,17 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.actions.ExampleAction;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Flywheel;
+import org.firstinspires.ftc.teamcode.robot.subsystems.TurretLauncher;
 
 @Config
 public class BioBuzzRobot extends SWEEPRobot {
     // Robot subsystems
     Drivetrain drivetrain;
-    Flywheel flywheelPollen;
-
-    Flywheel flywheelNectar;
+    TurretLauncher pollenLauncher;
+    TurretLauncher nectarLauncher;
+    public static double p = 1;
+    public static double i = 1;
+    public static double d = 1;
 
 
     /**
@@ -31,12 +33,12 @@ public class BioBuzzRobot extends SWEEPRobot {
     public BioBuzzRobot(HardwareMap hardwareMap, Telemetry telemetry){
         runtime = new ElapsedTime();
         this.drivetrain = new Drivetrain(hardwareMap, telemetry, false);
-        this.flywheelPollen = new Flywheel(hardwareMap, telemetry, new ElapsedTime(),true,"pollenFlywheel");
-        this.flywheelNectar = new Flywheel(hardwareMap,telemetry,new ElapsedTime(),false,"nectarFlywheel");
+        this.pollenLauncher = new TurretLauncher("pollenRamp", "pollenFlywheel", "pollenTurretEncoder","pollenTurretServo",hardwareMap,telemetry,runtime,p,i,d);
+        this.nectarLauncher = new TurretLauncher("nectarRamp", "nectarFlywheel", "nectarTurretEncoder","nectarTurretServo",hardwareMap,telemetry,runtime,p,i,d);
         subsystems = new Subsystem[]{
                 drivetrain,
-                flywheelPollen,
-                flywheelNectar
+                pollenLauncher,
+                nectarLauncher
         };
     }
     /**
@@ -67,8 +69,8 @@ public class BioBuzzRobot extends SWEEPRobot {
     public Drivetrain getDrivetrain() {
         return drivetrain;
     }
-    public Flywheel getFlywheelPollen(){
-        return flywheelPollen;
+    public TurretLauncher getPollenLauncher(){
+        return pollenLauncher;
     }
     // Robot action definitions
     /**

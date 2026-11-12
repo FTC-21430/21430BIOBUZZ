@@ -16,9 +16,9 @@ public class FlywheelTesting extends LinearOpMode {
 
             while(opModeIsActive()){
                 if(gamepad1.circle){
-                    robot.getFlywheelPollen().setTargetSpeed(flywheelSpeedRPM);
+                    robot.getPollenLauncher().setFlywheelSpeed(flywheelSpeedRPM);
                 }else {
-                    robot.getFlywheelPollen().setTargetSpeed(0);
+                    robot.getPollenLauncher().setFlywheelSpeed(0);
                 }
             }
 
