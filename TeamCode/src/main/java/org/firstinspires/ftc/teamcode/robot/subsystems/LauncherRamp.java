@@ -24,25 +24,30 @@ public class LauncherRamp implements Subsystem {
     //TODO: as said on line 13, All of these values have been guesstimated by Tobin based on the CAD models.
 
     // the full range of motion of the servo - note that this is usually a little different than what it is on the spec sheet, double check values.
-    public static double servoROM = 288.5; // degrees - Based from the specs of a gobilda torque servo - need to identify correct range.
-
+    public static double pollenServoROM = 1;
+    public static double nectarServoROM = 1;
     // The range of motion the ramp can move, from completely retracted to farthest mechanical limit
 //    Took radius from pivot point to end of ramp and the circumference segment of the movable ramp segment. Took that ratio of full circumference and part to find ROM
-    public static double rampROM = 41.5; // degrees guessed based on CAD.
+    public static double pollenRampROM = 1;
+    public static double nectarRampROM = 1;
     // The gear ratio between the launcher hood and the servo gear - Provided by the chief engineer in training who designed this part on hardware.
-    public static double servoToRampRatio = (double) 1 / 6;
+    public static double pollenServoToRampRatio = (double) 1 / 6;
+    public static double nectarServoToRampRatio = (double) 1 / 6;
 
     // The minimum angle of the ramp up from Horizontal
     // measured from CAD - eyeballed
-    public static double minRampAngle = 37.5;
+    public static double pollenMinRampAngle = 37.5;
+    public static double nectarMinRampAngle = 37.5;
 
     // The maximum angle of the ramp up from Horizontal used previous values
-    private final double MAX_RAMP_ANGLE = minRampAngle + rampROM;
+    private final double POLLEN_MAX_RAMP_ANGLE = pollenMinRampAngle + pollenRampROM;
+    private final double NECTAR_MAX_RAMP_ANGLE = nectarMinRampAngle + nectarRampROM;
     public static double timeout = 0.2;
     private double errorTolerance; //TODO: Find good error tolerance
     private ElapsedTime movementTimeout;
     private boolean disabled = false;
-    private double targetAngle = minRampAngle;
+    private double targetAngle = pollenMinRampAngle;
+    private boolean isPollen;
 
     /**
      * Construct function for this class, gets the servo reference
@@ -50,7 +55,13 @@ public class LauncherRamp implements Subsystem {
      */
     public LauncherRamp(HardwareMap hardwareMap, String ramp) {
         // All values are passed to the servo assuming that the servo's zero is the launcher's min.
-        rampServo = new ServoPlus(hardwareMap.get(Servo.class, ramp),servoROM * servoToRampRatio,rampAngleToServo(minRampAngle), rampAngleToServo(MAX_RAMP_ANGLE));
+        if (ramp.equals("pollenRamp")) {
+            rampServo = new ServoPlus(hardwareMap.get(Servo.class, ramp), pollenServoROM * pollenServoToRampRatio, rampAngleToServo(pollenMinRampAngle), rampAngleToServo(POLLEN_MAX_RAMP_ANGLE));
+            isPollen=true;
+        } else {
+            rampServo = new ServoPlus(hardwareMap.get(Servo.class, ramp), nectarServoROM * nectarServoToRampRatio, rampAngleToServo(nectarMinRampAngle), rampAngleToServo(NECTAR_MAX_RAMP_ANGLE));
+            isPollen=false;
+        }
         movementTimeout = new ElapsedTime();
     }
     @Override
@@ -72,34 +83,54 @@ public class LauncherRamp implements Subsystem {
      * @param angleUpFromHorizontal degrees above Horizontal the tangent line of the hood should be.
      */
     public void setLaunchAngle(double angleUpFromHorizontal){
-        angleUpFromHorizontal = Range.clip(angleUpFromHorizontal, minRampAngle, MAX_RAMP_ANGLE-6);
-        targetAngle = angleUpFromHorizontal;
+        if (isPollen) {
+            angleUpFromHorizontal = Range.clip(angleUpFromHorizontal, pollenMinRampAngle, POLLEN_MAX_RAMP_ANGLE - 6);
+            targetAngle = angleUpFromHorizontal;
+        } else {
+            angleUpFromHorizontal = Range.clip(angleUpFromHorizontal, nectarMinRampAngle, NECTAR_MAX_RAMP_ANGLE - 6);
+            targetAngle = angleUpFromHorizontal;
+        }
     }
 
     /**
      * lowest launch angle, resting position
      */
     public void retract(){
-        targetAngle = minRampAngle;
+        if (isPollen){
+        targetAngle = pollenMinRampAngle;
+        } else {
+            targetAngle = nectarMinRampAngle;
+        }
     }
 
     /**
      * Highest launch angle
      */
     public void extendFull(){
-        targetAngle = MAX_RAMP_ANGLE;
+        if (isPollen) {
+            targetAngle = POLLEN_MAX_RAMP_ANGLE;
+        } else {
+            targetAngle = NECTAR_MAX_RAMP_ANGLE;
+        }
     }
 
     /**
      * right in between the limits of launch angles
      */
     public void midAngle(){
-        targetAngle = (MAX_RAMP_ANGLE - minRampAngle)/2;
+        if (isPollen){
+            targetAngle = (POLLEN_MAX_RAMP_ANGLE - pollenMinRampAngle)/2;
+        } else {
+            targetAngle = (NECTAR_MAX_RAMP_ANGLE - pollenMinRampAngle)/2;
+        }
     }
     public double getCurrentAngle(){
-        return rampServo.getServoPos() + minRampAngle;
+        if (isPollen) {
+            return rampServo.getServoPos() + pollenMinRampAngle;
+        } else {
+            return  rampServo.getServoPos() + nectarMinRampAngle;
+        }
     }
-    //TODO: Does this actually work?
     public boolean isAtTargetAngle(){
         return Math.abs(getCurrentAngle() - rampServo.getServoPos()) < errorTolerance;
     }
@@ -110,7 +141,11 @@ public class LauncherRamp implements Subsystem {
      * @return 1/6 the angle the servo needs to be at to align hood to angle.
      */
     private double rampAngleToServo(double angle){
-        return angle - minRampAngle;
+        if (isPollen){
+            return angle - pollenMinRampAngle;
+        } else {
+            return  angle - pollenMinRampAngle;
+        }
     }
     public boolean isReady(){
         return movementTimeout.seconds() >= timeout;
