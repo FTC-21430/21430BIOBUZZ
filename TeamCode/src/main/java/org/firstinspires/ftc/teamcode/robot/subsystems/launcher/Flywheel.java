@@ -2,7 +2,7 @@
 // This class controls the flywheel motor, including PIDF configuration and speed control.
 // It provides methods to set and get the flywheel's speed, and to check if the flywheel is at the target speed.
 
-package org.firstinspires.ftc.teamcode.robot.subsystems;
+package org.firstinspires.ftc.teamcode.robot.subsystems.launcher;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.broombots.sweep.Classes.Subsystem;

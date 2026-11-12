@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import com.broombots.sweep.Classes.Coordinate;
 import com.broombots.sweep.Classes.Pos2D;
 import com.broombots.sweep.Classes.SWEEPRobot;
 import com.broombots.sweep.Classes.Subsystem;
@@ -9,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.actions.ExampleAction;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Drivetrain;
-import org.firstinspires.ftc.teamcode.robot.subsystems.Flywheel;
+import org.firstinspires.ftc.teamcode.robot.subsystems.launcher.Flywheel;
 
 public class BioBuzzRobot extends SWEEPRobot {
     // Robot subsystems
