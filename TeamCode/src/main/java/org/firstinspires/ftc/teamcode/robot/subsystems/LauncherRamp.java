@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.subsystems;
 // Written by Tobin
 
 import com.acmerobotics.dashboard.config.Config;
+import com.broombots.sweep.Classes.Subsystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Resources.ServoPlus;
  * TODO: Test and double check all of the constants, they were guessed based on the CAD and the specs of a Gobilda Torque Servo as found here https://www.gobilda.com/2000-series-dual-mode-servo-25-2-torque on 11/6/2025 - Tobin
  */
 @Config
-public class LauncherRamp {
+public class LauncherRamp implements Subsystem {
 
     // servo instance
     private ServoPlus rampServo = null;
@@ -40,15 +41,30 @@ public class LauncherRamp {
     public static double timeout = 0.2;
     private double errorTolerance; //TODO: Find good error tolerance
     private ElapsedTime movementTimeout;
+    private boolean disabled = false;
+    private double targetAngle = minRampAngle;
 
     /**
      * Construct function for this class, gets the servo reference
      * @param hardwareMap used to get the hardware reference for the ramp servo
      */
-    public LauncherRamp(HardwareMap hardwareMap){
+    public LauncherRamp(HardwareMap hardwareMap, String ramp) {
         // All values are passed to the servo assuming that the servo's zero is the launcher's min.
-        rampServo = new ServoPlus(hardwareMap.get(Servo.class, "ramp"),servoROM * servoToRampRatio,rampAngleToServo(minRampAngle), rampAngleToServo(MAX_RAMP_ANGLE));
+        rampServo = new ServoPlus(hardwareMap.get(Servo.class, ramp),servoROM * servoToRampRatio,rampAngleToServo(minRampAngle), rampAngleToServo(MAX_RAMP_ANGLE));
         movementTimeout = new ElapsedTime();
+    }
+    @Override
+    public void setDisabled(boolean disable) {
+        disabled = disable;
+    }
+    @Override
+    public void update() {
+        if (disabled) {return;}
+        if (Math.abs(rampServo.getServoPos() - rampAngleToServo(targetAngle)) > errorTolerance){
+            movementTimeout.reset();
+        }
+        rampServo.setServoPos(rampAngleToServo(targetAngle));
+
     }
 
     /**
@@ -57,36 +73,33 @@ public class LauncherRamp {
      */
     public void setLaunchAngle(double angleUpFromHorizontal){
         angleUpFromHorizontal = Range.clip(angleUpFromHorizontal, minRampAngle, MAX_RAMP_ANGLE-6);
-
-        if (Math.abs(rampServo.getServoPos() - rampAngleToServo(angleUpFromHorizontal)) > errorTolerance){
-            movementTimeout.reset();
-        }
-        rampServo.setServoPos(rampAngleToServo(angleUpFromHorizontal));
+        targetAngle = angleUpFromHorizontal;
     }
 
     /**
      * lowest launch angle, resting position
      */
     public void retract(){
-        rampServo.setServoPos(rampAngleToServo(minRampAngle));
+        targetAngle = minRampAngle;
     }
 
     /**
      * Highest launch angle
      */
     public void extendFull(){
-        rampServo.setServoPos(rampAngleToServo(MAX_RAMP_ANGLE));
+        targetAngle = MAX_RAMP_ANGLE;
     }
 
     /**
      * right in between the limits of launch angles
      */
     public void midAngle(){
-        rampServo.setServoPos(rampAngleToServo((MAX_RAMP_ANGLE - minRampAngle)/2));
+        targetAngle = (MAX_RAMP_ANGLE - minRampAngle)/2;
     }
     public double getCurrentAngle(){
         return rampServo.getServoPos() + minRampAngle;
     }
+    //TODO: Does this actually work?
     public boolean isAtTargetAngle(){
         return Math.abs(getCurrentAngle() - rampServo.getServoPos()) < errorTolerance;
     }

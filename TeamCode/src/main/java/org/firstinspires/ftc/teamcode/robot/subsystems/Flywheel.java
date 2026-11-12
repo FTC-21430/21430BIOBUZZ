@@ -44,15 +44,15 @@ public class Flywheel implements Subsystem {
     public static double pollenF = 13.5;
     public static double nectarF = 13.5;
     private boolean isDisabled = false;
+    private String pollenFlywheel = "pollenFlywheel";
 
     /**
      * Constructs a Flywheel instance and configures the motor and PIDF coefficients.
      * @param hardwareMap HardwareMap for accessing hardware devices
      * @param telemetry Telemetry for reporting data
      * @param runtime ElapsedTime instance for timing
-     * @param isPollen Determines if it is pollen or nectar
      */
-    public Flywheel(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime runtime,Boolean isPollen, String deviceName){
+    public Flywheel(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime runtime, String deviceName){
         this.telemetry = telemetry;
         this.runtime = runtime;
 
@@ -62,7 +62,7 @@ public class Flywheel implements Subsystem {
         flywheel.setMotorEnable();
         flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
-        if(isPollen){
+        if(deviceName.equals(pollenFlywheel)){
             flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(pollenP, pollenI, pollenD, pollenF));
         }else {
             flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(nectarP, nectarI, nectarD, nectarF));
