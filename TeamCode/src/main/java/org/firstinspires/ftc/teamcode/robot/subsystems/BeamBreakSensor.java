@@ -62,7 +62,7 @@ public class BeamBreakSensor implements Subsystem {
      *
      * @return whether the last update detected a rising edge
      */
-    public boolean BeamBreakRise() {
+    public boolean isRisen() {
         return !wasBeamBroken && isBeamBroken;
     }
     /**
@@ -70,7 +70,7 @@ public class BeamBreakSensor implements Subsystem {
      *
      * @return whether the last update detected a falling edge
      */
-    public boolean BeamBreakFall() {
+    public boolean isFallen() {
         return wasBeamBroken && !isBeamBroken;
     }
 
