@@ -15,19 +15,20 @@ public class Turret implements Subsystem {
     private double servoP = 0;
     private double servoI = 0;
     private double servoD = 0;
-    private PIDController encoderPidController;
-    private double encoderP = 0;
-    private double encoderI = 0;
-    private double encoderD = 0;
-
     private boolean isDisabled = false;
-    public Turret(HardwareMap hardwareMap, String servoHardwareAddress, String encoderHardwareAddress){
+
+    /**
+     * @param hardwareMap used for servo and encoder access
+     * @param servoHardwareAddress used to access servo on HardwareMap
+     * @param encoderHardwareAddress used to access encoder on HardwareMap
+     * @param encoderTicksToRevOfTurret used to convert encoder to useful rev data
+     */
+    public Turret(HardwareMap hardwareMap, String servoHardwareAddress, String encoderHardwareAddress, double encoderTicksToRevOfTurret){
         turretServo = hardwareMap.get(Servo.class, servoHardwareAddress);
         turretEncoder = hardwareMap.get(DcMotor.class, encoderHardwareAddress);
         turretEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turretEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         servoPidController = new PIDController(servoP, servoI, servoD, new ElapsedTime());
-        encoderPidController = new PIDController(encoderP, encoderI, encoderD, new ElapsedTime());
     }
     public void setDisabled(boolean disabled){
 ;       if(disabled){turretServo.setPosition(0.5);}
@@ -35,7 +36,7 @@ public class Turret implements Subsystem {
 
     }
     public void update(){
-        encoderPidController.update(getTurretAngle());
+        servoPidController.update(getTurretAngle());
         if(isDisabled){return;}
         turretServo.setPosition(((servoPidController.getPower())/2)+0.5);
     }
@@ -51,7 +52,7 @@ public class Turret implements Subsystem {
     }
     public boolean isAtAngle(){
         double errorTolerance = 2; //TODO: find a good error tolerance, this is just a guess
-        return Math.abs(getTurretAngle() - encoderPidController.getTarget()) <= errorTolerance;
+        return Math.abs(getTurretAngle() - servoPidController.getTarget()) <= errorTolerance;
     }
     public double getTarget(){
         return servoPidController.getTarget();

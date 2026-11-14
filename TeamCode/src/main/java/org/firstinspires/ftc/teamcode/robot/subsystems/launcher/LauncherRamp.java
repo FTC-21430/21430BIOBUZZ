@@ -13,11 +13,9 @@ public class LauncherRamp implements Subsystem {
 
     // servo instance
     private ServoPlus rampServo = null;
-
-    public static double servoROM = 1;
-    public static double rampROM = 1;
+    private double rampROM = 1;
+    private double minRampAngle = 37.5;
     public static double servoToRampRatio = (double) 1 / 6;
-    public static double minRampAngle = 37.5;
     private double maxRampAngle = minRampAngle + rampROM;
     public static double timeout = 0.2;
     public static double errorTolerance; //TODO: Find good error tolerance
@@ -30,9 +28,11 @@ public class LauncherRamp implements Subsystem {
      * @param hardwareMap used to get the hardware reference for the ramp servo
      * @param hardwareAddress gives String used to call the ramp servo
      */
-    public LauncherRamp(HardwareMap hardwareMap, String hardwareAddress) {
+    public LauncherRamp(HardwareMap hardwareMap, String hardwareAddress, double servoROM, double rampROM, double minRampAngle) {
         rampServo = new ServoPlus(hardwareMap.get(Servo.class, hardwareAddress), servoROM * servoToRampRatio, rampAngleToServo(minRampAngle), rampAngleToServo(maxRampAngle));
         movementTimeout = new ElapsedTime();
+        this.rampROM = rampROM;
+        this.minRampAngle = minRampAngle;
     }
     @Override
     public void setDisabled(boolean disable) {
@@ -63,16 +63,6 @@ public class LauncherRamp implements Subsystem {
      */
     public void retract(){
         targetAngle = minRampAngle;
-    }
-
-    public void setServoROM(double rom){
-        servoROM = rom;
-    }
-    public void setMinRampAngle(double minAngle){
-        minRampAngle = minAngle;
-    }
-    public void setRampROM(double rom){
-        rampROM = rom;
     }
 
     /**
