@@ -5,8 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robot.BioBuzzRobot;
 
+/** Tests the pollen and nectar flywheels using the gamepad face buttons. */
 @TeleOp
 public class FlywheelTesting extends LinearOpMode {
+    /** Requested flywheel speed in rotations per minute while a button is held. */
     public static int flywheelSpeedRPM= 250;
     @Override
         public void runOpMode()  {

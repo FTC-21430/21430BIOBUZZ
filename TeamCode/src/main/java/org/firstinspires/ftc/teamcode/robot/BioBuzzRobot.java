@@ -21,8 +21,8 @@ public class BioBuzzRobot extends SWEEPRobot {
 
 
     /**
-     * Constructor for the SoftwareTestingBot class.
-     * Initializes the robot's subsystems and takes FIRSTSDK bits
+     * Creates the robot and initializes its drivetrain and launchers.
+     *
      * @param hardwareMap The hardware map used to access the robot's hardware components.
      * @param telemetry   The telemetry object used for sending data to the driver station.
      */
@@ -66,9 +66,19 @@ public class BioBuzzRobot extends SWEEPRobot {
     public Drivetrain getDrivetrain() {
         return drivetrain;
     }
+    /**
+     * Returns the pollen launcher.
+     *
+     * @return pollen launcher subsystem
+     */
     public PollenTurretLauncher getPollenLauncher(){
         return pollenLauncher;
     }
+    /**
+     * Returns the nectar launcher.
+     *
+     * @return nectar launcher subsystem
+     */
     public NectarTurretLauncher getNectarLauncher(){
         return nectarLauncher;
     }

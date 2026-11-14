@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.Resources.ServoPlus;
 
+/** Controls the launcher ramp servo and its target launch angle. */
 @Config
 public class LauncherRamp implements Subsystem {
 
@@ -15,18 +16,25 @@ public class LauncherRamp implements Subsystem {
     private ServoPlus rampServo = null;
     private double rampROM = 1;
     private double minRampAngle = 37.5;
+    /** Ratio used when configuring the servo's range of motion. */
     public static double servoToRampRatio = (double) 1 / 6;
     private double maxRampAngle = minRampAngle + rampROM;
+    /** Time in seconds used by {@link #isReady()}. */
     public static double timeout = 0.2;
+    /** Position error tolerance used by the ramp's readiness checks. */
     public static double errorTolerance; //TODO: Find good error tolerance
     private ElapsedTime movementTimeout;
     private boolean disabled = false;
     private double targetAngle;
 
     /**
-     * Construct function for this class, gets the servo reference
-     * @param hardwareMap used to get the hardware reference for the ramp servo
-     * @param hardwareAddress gives String used to call the ramp servo
+     * Creates the ramp controller and obtains its servo.
+     *
+     * @param hardwareMap hardware devices available to the robot
+     * @param hardwareAddress configured name of the ramp servo
+     * @param servoROM servo range of motion
+     * @param rampROM ramp range of motion
+     * @param minRampAngle minimum ramp angle
      */
     public LauncherRamp(HardwareMap hardwareMap, String hardwareAddress, double servoROM, double rampROM, double minRampAngle) {
         rampServo = new ServoPlus(hardwareMap.get(Servo.class, hardwareAddress), servoROM * servoToRampRatio, rampAngleToServo(minRampAngle), rampAngleToServo(maxRampAngle));
@@ -50,8 +58,9 @@ public class LauncherRamp implements Subsystem {
     }
 
     /**
-     * Sets the launch angle of the servo. will ensure correct range of input and convert angle to servo position.
-     * @param angleUpFromHorizontal degrees above Horizontal the tangent line of the hood should be.
+     * Sets the target launch angle, clipped to the configured range.
+     *
+     * @param angleUpFromHorizontal requested angle in degrees above horizontal
      */
     public void setLaunchAngle(double angleUpFromHorizontal){
         angleUpFromHorizontal = Range.clip(angleUpFromHorizontal, minRampAngle, maxRampAngle - 6);
@@ -59,40 +68,56 @@ public class LauncherRamp implements Subsystem {
     }
 
     /**
-     * lowest launch angle, resting position
+     * Sets the target to the minimum launch angle.
      */
     public void retract(){
         targetAngle = minRampAngle;
     }
 
     /**
-     * Highest launch angle
+     * Sets the target to the maximum launch angle.
      */
     public void extendFull(){
             targetAngle = maxRampAngle;
     }
 
     /**
-     * right in between the limits of launch angles
+     * Sets the target to half the difference between the maximum and minimum angles.
      */
     public void midAngle(){
             targetAngle = (maxRampAngle - minRampAngle)/2;
     }
+    /**
+     * Returns the angle calculated from the servo position and minimum ramp angle.
+     *
+     * @return calculated ramp angle
+     */
     public double getCurrentAngle(){
             return  rampServo.getServoPos() + minRampAngle;
     }
+    /**
+     * Checks the current angle against the servo position using the error tolerance.
+     *
+     * @return whether the difference is less than the configured tolerance
+     */
     public boolean isAtTargetAngle(){
         return Math.abs(getCurrentAngle() - rampServo.getServoPos()) < errorTolerance;
     }
 
     /**
-     * converts degrees over horizontal to something the servo can use by subtracting the offset that is the ramp's min angle.
-     * @param angle degrees over horizontal
-     * @return 1/6 the angle the servo needs to be at to align hood to angle.
+     * Converts a launch angle to a servo position by subtracting the minimum angle.
+     *
+     * @param angle launch angle in degrees above horizontal
+     * @return angle relative to the minimum ramp angle
      */
     private double rampAngleToServo(double angle){
             return  angle - minRampAngle;
     }
+    /**
+     * Checks whether the movement timeout has elapsed.
+     *
+     * @return whether the timer has reached {@link #timeout}
+     */
     public boolean isReady(){
         return movementTimeout.seconds() >= timeout;
     }
