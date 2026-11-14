@@ -16,8 +16,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.launcher.NectarTurretLaun
 public class BioBuzzRobot extends SWEEPRobot {
     // Robot subsystems
     Drivetrain drivetrain;
-    PollenTurretLauncher pollenLauncher;
-    NectarTurretLauncher nectarLauncher;
+    BallControl ballControl;
 
 
     /**
@@ -30,12 +29,10 @@ public class BioBuzzRobot extends SWEEPRobot {
     public BioBuzzRobot(HardwareMap hardwareMap, Telemetry telemetry){
         runtime = new ElapsedTime();
         this.drivetrain = new Drivetrain(hardwareMap, telemetry, false);
-        this.pollenLauncher = new PollenTurretLauncher(hardwareMap,telemetry,runtime);
-        this.nectarLauncher = new NectarTurretLauncher(hardwareMap,telemetry,runtime);
+        this.ballControl = new BallControl(hardwareMap, telemetry, runtime, Alliance.RED);
         subsystems = new Subsystem[]{
                 drivetrain,
-                pollenLauncher,
-                nectarLauncher
+                ballControl
         };
     }
     /**
@@ -66,21 +63,8 @@ public class BioBuzzRobot extends SWEEPRobot {
     public Drivetrain getDrivetrain() {
         return drivetrain;
     }
-    /**
-     * Returns the pollen launcher.
-     *
-     * @return pollen launcher subsystem
-     */
-    public PollenTurretLauncher getPollenLauncher(){
-        return pollenLauncher;
-    }
-    /**
-     * Returns the nectar launcher.
-     *
-     * @return nectar launcher subsystem
-     */
-    public NectarTurretLauncher getNectarLauncher(){
-        return nectarLauncher;
+    public BallControl getBallControl() {
+        return ballControl;
     }
     // Robot action definitions
     /**
