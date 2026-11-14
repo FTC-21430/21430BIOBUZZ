@@ -40,7 +40,8 @@ public class Turret implements Subsystem {
         if(isDisabled){return;}
         turretServo.setPosition(((servoPidController.getPower())/2)+0.5);
     }
-    public void setTurretAngle(double angle){servoPidController.setTarget(angle);
+    public void setTurretAngle(double angle){
+        servoPidController.setTarget(angle);
     }
     public double getTurretAngle(){
         //Calculation is 4000 encoder ticks to a rotation of the turret, a rotation of the turret is 2.75 rotations of the servo, and dividing by 360 gets it into degrees
