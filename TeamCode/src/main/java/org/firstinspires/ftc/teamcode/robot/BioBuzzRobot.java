@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.broombots.sweep.Classes.Coordinate;
+import static com.broombots.sweep.Classes.Robot.Alliance;
 import com.broombots.sweep.Classes.Pos2D;
 import com.broombots.sweep.Classes.SWEEPRobot;
 import com.broombots.sweep.Classes.Subsystem;
@@ -10,20 +10,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.actions.ExampleAction;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Drivetrain;
-import org.firstinspires.ftc.teamcode.robot.subsystems.Flywheel;
 
 @Config
 public class BioBuzzRobot extends SWEEPRobot {
     // Robot subsystems
     Drivetrain drivetrain;
-    Flywheel flywheelPollen;
-
-    Flywheel flywheelNectar;
+    BallControl ballControl;
 
 
     /**
-     * Constructor for the SoftwareTestingBot class.
-     * Initializes the robot's subsystems and takes FIRSTSDK bits
+     * Creates the robot and initializes its drivetrain and launchers.
+     *
      * @param hardwareMap The hardware map used to access the robot's hardware components.
      * @param telemetry   The telemetry object used for sending data to the driver station.
      */
@@ -31,12 +28,10 @@ public class BioBuzzRobot extends SWEEPRobot {
     public BioBuzzRobot(HardwareMap hardwareMap, Telemetry telemetry){
         runtime = new ElapsedTime();
         this.drivetrain = new Drivetrain(hardwareMap, telemetry, false);
-        this.flywheelPollen = new Flywheel(hardwareMap, telemetry, new ElapsedTime(),true,"pollenFlywheel");
-        this.flywheelNectar = new Flywheel(hardwareMap,telemetry,new ElapsedTime(),false,"nectarFlywheel");
+        this.ballControl = new BallControl(hardwareMap, telemetry, runtime, Alliance.RED);
         subsystems = new Subsystem[]{
                 drivetrain,
-                flywheelPollen,
-                flywheelNectar
+                ballControl
         };
     }
     /**
@@ -67,8 +62,8 @@ public class BioBuzzRobot extends SWEEPRobot {
     public Drivetrain getDrivetrain() {
         return drivetrain;
     }
-    public Flywheel getFlywheelPollen(){
-        return flywheelPollen;
+    public BallControl getBallControl() {
+        return ballControl;
     }
     // Robot action definitions
     /**
