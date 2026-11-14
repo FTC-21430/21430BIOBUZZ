@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Resources.ServoPlus;
+import org.firstinspires.ftc.teamcode.resources.ServoPlus;
 import org.firstinspires.ftc.teamcode.robot.subsystems.launcher.NectarTurretLauncher;
 import org.firstinspires.ftc.teamcode.robot.subsystems.launcher.PollenTurretLauncher;
 

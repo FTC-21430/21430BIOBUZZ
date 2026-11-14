@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Resources;
+package org.firstinspires.ftc.teamcode.resources;
 
 import com.acmerobotics.dashboard.config.Config;
 import org.firstinspires.ftc.robotcore.external.Telemetry;

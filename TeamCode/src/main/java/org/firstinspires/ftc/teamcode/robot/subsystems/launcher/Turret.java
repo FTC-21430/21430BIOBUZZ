@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Resources.PIDController;
+import org.firstinspires.ftc.teamcode.resources.PIDController;
 
 public class Turret implements Subsystem {
     private Servo turretServo;

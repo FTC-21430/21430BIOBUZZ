@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.teamcode.Resources.ServoPlus;
+import org.firstinspires.ftc.teamcode.resources.ServoPlus;
 
 /** Controls the launcher ramp servo and its target launch angle. */
 @Config
