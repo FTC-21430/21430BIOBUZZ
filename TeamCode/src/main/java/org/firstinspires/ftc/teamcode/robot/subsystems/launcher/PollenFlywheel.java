@@ -9,9 +9,10 @@ public class PollenFlywheel extends Flywheel {
     private final int POLLEN_P  = 70;
     private final int POLLEN_I = 65;
     private final int POLLEN_D = 45;
+    private final int POLLEN_F = 0;
 
-    public PollenFlywheel(HardwareMap hardwareMap, Telemetry telemetry){
-        super(hardwareMap,telemetry,new ElapsedTime(), "pollen_flywheel");
-        setPIDFCoeffs(POLLEN_P,POLLEN_I,POLLEN_D);
+    public PollenFlywheel(HardwareMap hardwareMap, Telemetry telemetry,ElapsedTime elapsedTime){
+        super(hardwareMap,telemetry, elapsedTime, "pollen_flywheel",true);
+        setPIDFCoefficients(POLLEN_P,POLLEN_I,POLLEN_D,POLLEN_F);
     }
 }

@@ -9,6 +9,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.actions.ExampleAction;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.robot.subsystems.launcher.Flywheel;
+import org.firstinspires.ftc.teamcode.robot.subsystems.launcher.PollenLauncher;
+import org.firstinspires.ftc.teamcode.robot.subsystems.launcher.TurretLauncher;
 
 public class BioBuzzRobot extends SWEEPRobot {
     // Robot subsystems
@@ -16,6 +18,7 @@ public class BioBuzzRobot extends SWEEPRobot {
     Flywheel flywheelPollen;
 
     Flywheel flywheelNectar;
+    TurretLauncher pollenLauncher;
 
 
     /**
@@ -28,12 +31,10 @@ public class BioBuzzRobot extends SWEEPRobot {
     public BioBuzzRobot(HardwareMap hardwareMap, Telemetry telemetry){
         runtime = new ElapsedTime();
         this.drivetrain = new Drivetrain(hardwareMap, telemetry, false);
-        this.flywheelPollen = new Flywheel(hardwareMap, telemetry, new ElapsedTime(),true,"pollenFlywheel");
-        this.flywheelNectar = new Flywheel(hardwareMap,telemetry,new ElapsedTime(),false,"nectarFlywheel");
+        this.pollenLauncher = new PollenLauncher(hardwareMap,telemetry);
         subsystems = new Subsystem[]{
                 drivetrain,
-                flywheelPollen,
-                flywheelNectar
+                pollenLauncher,
         };
     }
     /**

@@ -35,6 +35,9 @@ public class LauncherRamp {
     // measured from CAD - eyeballed
     public static double minRampAngle = 37.5;
 
+    //Set angleUpFromHorizontal to the minimum default angle
+    private double angleUpFromHorizontal = 0;
+
     // The maximum angle of the ramp up from Horizontal used previous values
     private final double MAX_RAMP_ANGLE = minRampAngle + rampROM;
     public static double timeout = 0.2;
@@ -56,12 +59,12 @@ public class LauncherRamp {
      * @param angleUpFromHorizontal degrees above Horizontal the tangent line of the hood should be.
      */
     public void setLaunchAngle(double angleUpFromHorizontal){
-        angleUpFromHorizontal = Range.clip(angleUpFromHorizontal, minRampAngle, MAX_RAMP_ANGLE-6);
+        this.angleUpFromHorizontal = Range.clip(angleUpFromHorizontal, minRampAngle, MAX_RAMP_ANGLE-6);
 
-        if (Math.abs(rampServo.getServoPos() - rampAngleToServo(angleUpFromHorizontal)) > errorTolerance){
+        if (Math.abs(rampServo.getServoPos() - rampAngleToServo(this.angleUpFromHorizontal)) > errorTolerance){
             movementTimeout.reset();
         }
-        rampServo.setServoPos(rampAngleToServo(angleUpFromHorizontal));
+
     }
 
     /**
@@ -101,5 +104,8 @@ public class LauncherRamp {
     }
     public boolean isReady(){
         return movementTimeout.seconds() >= timeout;
+    }
+    public void update(){
+        rampServo.setServoPos(rampAngleToServo(this.angleUpFromHorizontal));
     }
 }

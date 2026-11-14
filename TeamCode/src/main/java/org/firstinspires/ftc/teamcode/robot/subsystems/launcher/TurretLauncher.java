@@ -1,15 +1,26 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.launcher;
 
-public class TurretLauncher {
+import com.broombots.sweep.Classes.Subsystem;
+
+public class TurretLauncher implements Subsystem {
     private LauncherRamp launcherRamp;
     private Flywheel flywheel;
     private Turret turret;
+    private boolean isDisabled = false;
         public TurretLauncher(LauncherRamp launcherRamp, Flywheel flywheel, Turret turret) {
                 this.launcherRamp = launcherRamp;
                 this.flywheel = flywheel;
                 this.turret = turret;
         }
-
+        public void update(){
+            this.launcherRamp.update();
+            this.flywheel.update();
+            this.turret.update();
+        }
+    @Override
+    public void setDisabled(boolean disabled){
+        isDisabled = disabled;
+    }
         public void setTurretAngle(double angle) {
                 turret.setTurretAngle(angle);
         }
