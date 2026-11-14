@@ -1,18 +1,18 @@
-package org.firstinspires.ftc.teamcode.robot.subsystems;
+package org.firstinspires.ftc.teamcode.robot.subsystems.launcher;
 
 import com.broombots.sweep.Classes.Subsystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class TurretLauncher implements Subsystem {
+public class PollenTurretLauncher implements Subsystem {
     private LauncherRamp launcherRamp;
     private Flywheel flywheel;
     private Turret turret;
-    public TurretLauncher(String launcherRamp, String flywheel, String turretEncoder, String turretServo, HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime runtime, double p, double i, double d) {
-        this.launcherRamp = new LauncherRamp(hardwareMap, launcherRamp);
-        this.flywheel = new Flywheel(hardwareMap, telemetry, runtime, flywheel);
-        this.turret = new Turret(hardwareMap, p, i, d, turretServo, turretEncoder);
+    public PollenTurretLauncher(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime runtime) {
+        this.launcherRamp = new LauncherRamp(hardwareMap, "pollenLauncherRamp");
+        this.flywheel = new Flywheel(hardwareMap, telemetry, runtime, "pollenFlywheel");
+        this.turret = new Turret(hardwareMap, "pollenTurretServo", "pollenTurretEncoder");
     }
     @Override
     public void setDisabled(boolean disable) {

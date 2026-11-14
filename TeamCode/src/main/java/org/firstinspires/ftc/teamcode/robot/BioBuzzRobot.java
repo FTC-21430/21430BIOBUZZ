@@ -9,18 +9,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.actions.ExampleAction;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Drivetrain;
-import org.firstinspires.ftc.teamcode.robot.subsystems.Flywheel;
-import org.firstinspires.ftc.teamcode.robot.subsystems.TurretLauncher;
+import org.firstinspires.ftc.teamcode.robot.subsystems.launcher.PollenTurretLauncher;
+import org.firstinspires.ftc.teamcode.robot.subsystems.launcher.NectarTurretLauncher;
 
 @Config
 public class BioBuzzRobot extends SWEEPRobot {
     // Robot subsystems
     Drivetrain drivetrain;
-    TurretLauncher pollenLauncher;
-    TurretLauncher nectarLauncher;
-    public static double p = 1;
-    public static double i = 1;
-    public static double d = 1;
+    PollenTurretLauncher pollenLauncher;
+    NectarTurretLauncher nectarLauncher;
 
 
     /**
@@ -33,8 +30,8 @@ public class BioBuzzRobot extends SWEEPRobot {
     public BioBuzzRobot(HardwareMap hardwareMap, Telemetry telemetry){
         runtime = new ElapsedTime();
         this.drivetrain = new Drivetrain(hardwareMap, telemetry, false);
-        this.pollenLauncher = new TurretLauncher("pollenRamp", "pollenFlywheel", "pollenTurretEncoder","pollenTurretServo",hardwareMap,telemetry,runtime,p,i,d);
-        this.nectarLauncher = new TurretLauncher("nectarRamp", "nectarFlywheel", "nectarTurretEncoder","nectarTurretServo",hardwareMap,telemetry,runtime,p,i,d);
+        this.pollenLauncher = new PollenTurretLauncher(hardwareMap,telemetry,runtime);
+        this.nectarLauncher = new NectarTurretLauncher(hardwareMap,telemetry,runtime);
         subsystems = new Subsystem[]{
                 drivetrain,
                 pollenLauncher,
@@ -69,8 +66,11 @@ public class BioBuzzRobot extends SWEEPRobot {
     public Drivetrain getDrivetrain() {
         return drivetrain;
     }
-    public TurretLauncher getPollenLauncher(){
+    public PollenTurretLauncher getPollenLauncher(){
         return pollenLauncher;
+    }
+    public NectarTurretLauncher getNectarLauncher(){
+        return nectarLauncher;
     }
     // Robot action definitions
     /**

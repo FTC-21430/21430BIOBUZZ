@@ -20,6 +20,11 @@ public class FlywheelTesting extends LinearOpMode {
                 }else {
                     robot.getPollenLauncher().setFlywheelSpeed(0);
                 }
+                if(gamepad1.square){
+                    robot.getNectarLauncher().setFlywheelSpeed(flywheelSpeedRPM);
+                }else {
+                    robot.getNectarLauncher().setFlywheelSpeed(0);
+                }
             }
 
         }
