@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Resources;
+package org.firstinspires.ftc.teamcode.resources;
 
 
 import com.broombots.sweep.Classes.Pos2D;
@@ -89,11 +89,25 @@ public class PositionedVector2D {
      * @return angle to the target in degrees
      */
     public double getEndpointAngleToPosition(Pos2D targetPos){
-        return Math.toDegrees(
-                Math.atan2(
-                        targetPos.x-(POS2D.x+magnitude*Math.cos(getDirectionRadians())),
-                        targetPos.y - (POS2D.x + magnitude*Math.sin(getDirectionRadians()))
-                ));
+        Pos2D endpoint = getEndpoint();
+        if (Math.abs(targetPos.x - endpoint.x) < 1e-6 && Math.abs(targetPos.y - endpoint.y) < 1e-6) return 0.0;
+        return Math.toDegrees(Math.atan2(
+                targetPos.y-(endpoint.y),
+                targetPos.x-(endpoint.x)
+        ));
+    }
+    public double getEndpointDistanceToPosition(Pos2D targetPos){
+        return Math.sqrt(
+                Math.pow(targetPos.x-(POS2D.x+magnitude*Math.cos(getDirectionRadians())),2)+
+                        Math.pow(targetPos.y - (POS2D.x + magnitude*Math.sin(getDirectionRadians())),2)
+        );
+    }
+    public Pos2D getEndpoint(){
+        return new Pos2D(
+                POS2D.x + magnitude * Math.cos(getDirectionRadians()),
+                POS2D.y + magnitude * Math.sin(getDirectionRadians()),
+                0
+        );
     }
 
 }
