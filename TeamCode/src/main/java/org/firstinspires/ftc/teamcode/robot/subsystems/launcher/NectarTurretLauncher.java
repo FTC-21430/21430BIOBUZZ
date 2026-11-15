@@ -14,6 +14,11 @@ public class NectarTurretLauncher extends GenericTurretLauncher {
     public static double minRampAngle = 37.5;
     /** Encoder ticks per turret revolution supplied to the turret constructor. */
     public static double encoderTicksToRevOfTurret = 4000*2.75;
+    public static double turretP = 0.1;
+    public static double turretI = 0.0;
+    public static double turretD = 0.0;
+    public static double errorTolerance = 3.0; // degrees
+    public static double turretROM = 420; //degrees of rotation for the turret
 
     /**
      * Creates the nectar launcher using its configured hardware names.
@@ -25,7 +30,7 @@ public class NectarTurretLauncher extends GenericTurretLauncher {
     public NectarTurretLauncher(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime runtime) {
         super(new LauncherRamp(hardwareMap, "nectarLauncherRamp",servoROM,rampROM,minRampAngle),
                 new Flywheel(hardwareMap, telemetry, runtime, "nectarFlywheel"),
-                new Turret(hardwareMap, "nectarTurretServo", "nectarTurretEncoder",encoderTicksToRevOfTurret)
+                new Turret(hardwareMap, "nectarTurretServo", "nectarTurretEncoder","nectarTurretBeam",encoderTicksToRevOfTurret,turretP,turretI,turretD,errorTolerance,turretROM)
         );
     }
 }
