@@ -39,6 +39,11 @@ android {
         }
         jniLibs.useLegacyPackaging true
     }
+    testOptions {
+        unitTests.all {
+            jvmArgs "-Dnet.bytebuddy.experimental=true"
+        }
+    }
 }
 
 dependencies {
