@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.launcher;
 
-import android.util.Log;
-
 import com.broombots.sweep.Classes.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;

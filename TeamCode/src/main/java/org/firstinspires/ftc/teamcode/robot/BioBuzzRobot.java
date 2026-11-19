@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import com.acmerobotics.dashboard.config.Config;
-import static com.broombots.sweep.Classes.Robot.Alliance;
 import com.broombots.sweep.Classes.Pos2D;
 import com.broombots.sweep.Classes.SWEEPRobot;
 import com.broombots.sweep.Classes.Subsystem;

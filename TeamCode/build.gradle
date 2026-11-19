@@ -45,6 +45,15 @@ android {
         }
     }
 }
+android {
+    // ... your existing compileSdk, defaultConfig, etc.
+
+    testOptions {
+        unitTests.all {
+            jvmArgs "-Dnet.bytebuddy.experimental=true"
+        }
+    }
+}
 
 dependencies {
     implementation project(':FtcRobotController')
