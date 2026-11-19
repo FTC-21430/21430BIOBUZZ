@@ -1,111 +1,124 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.launcher;
 
-// Written by Tobin
-
 import com.acmerobotics.dashboard.config.Config;
+import com.broombots.sweep.Classes.Subsystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.teamcode.Resources.ServoPlus;
+import org.firstinspires.ftc.teamcode.resources.ServoPlus;
 
-/**
- * Firmware to control the ramp of the launcher. Uses the ServoPlus resource to ensure easy logic.
- * TODO: Test and double check all of the constants, they were guessed based on the CAD and the specs of a Gobilda Torque Servo as found here https://www.gobilda.com/2000-series-dual-mode-servo-25-2-torque on 11/6/2025 - Tobin
- */
+/** Controls the launcher ramp servo and its target launch angle. */
 @Config
-public class LauncherRamp {
+public class LauncherRamp implements Subsystem {
 
     // servo instance
     private ServoPlus rampServo = null;
-
-
-    //TODO: as said on line 13, All of these values have been guesstimated by Tobin based on the CAD models.
-
-    // the full range of motion of the servo - note that this is usually a little different than what it is on the spec sheet, double check values.
-    public static double servoROM = 288.5; // degrees - Based from the specs of a gobilda torque servo - need to identify correct range.
-
-    // The range of motion the ramp can move, from completely retracted to farthest mechanical limit
-//    Took radius from pivot point to end of ramp and the circumference segment of the movable ramp segment. Took that ratio of full circumference and part to find ROM
-    public static double rampROM = 41.5; // degrees guessed based on CAD.
-    // The gear ratio between the launcher hood and the servo gear - Provided by the chief engineer in training who designed this part on hardware.
+    private double rampROM = 1;
+    private double minRampAngle = 37.5;
+    /** Ratio used when configuring the servo's range of motion. */
     public static double servoToRampRatio = (double) 1 / 6;
-
-    // The minimum angle of the ramp up from Horizontal
-    // measured from CAD - eyeballed
-    public static double minRampAngle = 37.5;
-
-    //Set angleUpFromHorizontal to the minimum default angle
-    private double angleUpFromHorizontal = 0;
-
-    // The maximum angle of the ramp up from Horizontal used previous values
-    private final double MAX_RAMP_ANGLE = minRampAngle + rampROM;
+    private double maxRampAngle = minRampAngle + rampROM;
+    /** Time in seconds used by {@link #isReady()}. */
     public static double timeout = 0.2;
-    private double errorTolerance; //TODO: Find good error tolerance
+    /** Position error tolerance used by the ramp's readiness checks. */
+    public static double errorTolerance; //TODO: Find good error tolerance
     private ElapsedTime movementTimeout;
+    private boolean disabled = false;
+    private double targetAngle;
 
     /**
-     * Construct function for this class, gets the servo reference
-     * @param hardwareMap used to get the hardware reference for the ramp servo
+     * Creates the ramp controller and obtains its servo.
+     *
+     * @param hardwareMap hardware devices available to the robot
+     * @param hardwareAddress configured name of the ramp servo
+     * @param servoROM servo range of motion
+     * @param rampROM ramp range of motion
+     * @param minRampAngle minimum ramp angle
      */
-    public LauncherRamp(HardwareMap hardwareMap){
-        // All values are passed to the servo assuming that the servo's zero is the launcher's min.
-        rampServo = new ServoPlus(hardwareMap.get(Servo.class, "ramp"),servoROM * servoToRampRatio,rampAngleToServo(minRampAngle), rampAngleToServo(MAX_RAMP_ANGLE));
+    public LauncherRamp(HardwareMap hardwareMap, String hardwareAddress, double servoROM, double rampROM, double minRampAngle) {
+        rampServo = new ServoPlus(hardwareMap.get(Servo.class, hardwareAddress), servoROM * servoToRampRatio, rampAngleToServo(minRampAngle), rampAngleToServo(maxRampAngle));
         movementTimeout = new ElapsedTime();
+        this.rampROM = rampROM;
+        this.minRampAngle = minRampAngle;
     }
-
-    /**
-     * Sets the launch angle of the servo. will ensure correct range of input and convert angle to servo position.
-     * @param angleUpFromHorizontal degrees above Horizontal the tangent line of the hood should be.
-     */
-    public void setLaunchAngle(double angleUpFromHorizontal){
-        this.angleUpFromHorizontal = Range.clip(angleUpFromHorizontal, minRampAngle, MAX_RAMP_ANGLE-6);
-
-        if (Math.abs(rampServo.getServoPos() - rampAngleToServo(this.angleUpFromHorizontal)) > errorTolerance){
+    @Override
+    public void setDisabled(boolean disable) {
+        disabled = disable;
+    }
+    @Override
+    public void update() {
+        if (disabled) {return;}
+        if (Math.abs(rampServo.getServoPos() - rampAngleToServo(targetAngle)) > errorTolerance){
             movementTimeout.reset();
         }
-
+        rampServo.setServoPos(rampAngleToServo(targetAngle));
+        servoToRampRatio = (double) 1 / 6;
+        maxRampAngle = minRampAngle + rampROM;
     }
 
     /**
-     * lowest launch angle, resting position
+     * Sets the target launch angle, clipped to the configured range.
+     *
+     * @param angleUpFromHorizontal requested angle in degrees above horizontal
+     */
+    public void setLaunchAngle(double angleUpFromHorizontal){
+        angleUpFromHorizontal = Range.clip(angleUpFromHorizontal, minRampAngle, maxRampAngle - 6);
+        targetAngle = angleUpFromHorizontal;
+    }
+
+    /**
+     * Sets the target to the minimum launch angle.
      */
     public void retract(){
-        rampServo.setServoPos(rampAngleToServo(minRampAngle));
+        targetAngle = minRampAngle;
     }
 
     /**
-     * Highest launch angle
+     * Sets the target to the maximum launch angle.
      */
     public void extendFull(){
-        rampServo.setServoPos(rampAngleToServo(MAX_RAMP_ANGLE));
+            targetAngle = maxRampAngle;
     }
 
     /**
-     * right in between the limits of launch angles
+     * Sets the target to half the difference between the maximum and minimum angles.
      */
     public void midAngle(){
-        rampServo.setServoPos(rampAngleToServo((MAX_RAMP_ANGLE - minRampAngle)/2));
+            targetAngle = (maxRampAngle - minRampAngle)/2;
     }
+    /**
+     * Returns the angle calculated from the servo position and minimum ramp angle.
+     *
+     * @return calculated ramp angle
+     */
     public double getCurrentAngle(){
-        return rampServo.getServoPos() + minRampAngle;
+            return  rampServo.getServoPos() + minRampAngle;
     }
+    /**
+     * Checks the current angle against the servo position using the error tolerance.
+     *
+     * @return whether the difference is less than the configured tolerance
+     */
     public boolean isAtTargetAngle(){
         return Math.abs(getCurrentAngle() - rampServo.getServoPos()) < errorTolerance;
     }
 
     /**
-     * converts degrees over horizontal to something the servo can use by subtracting the offset that is the ramp's min angle.
-     * @param angle degrees over horizontal
-     * @return 1/6 the angle the servo needs to be at to align hood to angle.
+     * Converts a launch angle to a servo position by subtracting the minimum angle.
+     *
+     * @param angle launch angle in degrees above horizontal
+     * @return angle relative to the minimum ramp angle
      */
     private double rampAngleToServo(double angle){
-        return angle - minRampAngle;
+            return  angle - minRampAngle;
     }
+    /**
+     * Checks whether the movement timeout has elapsed.
+     *
+     * @return whether the timer has reached {@link #timeout}
+     */
     public boolean isReady(){
         return movementTimeout.seconds() >= timeout;
-    }
-    public void update(){
-        rampServo.setServoPos(rampAngleToServo(this.angleUpFromHorizontal));
     }
 }

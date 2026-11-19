@@ -19,13 +19,14 @@ apply plugin: 'dev.frozenmilk.sinister.sloth.load'
 
 buildscript {
     repositories {
+        google()
         mavenCentral()
         maven {
             url "https://repo.dairy.foundation/releases"
         }
     }
     dependencies {
-        classpath "dev.frozenmilk:Load:0.2.4"
+        classpath "dev.frozenmilk:Load:0.3.2"
     }
 }
 
@@ -37,6 +38,11 @@ android {
             pickFirsts += ['**/*.so']
         }
         jniLibs.useLegacyPackaging true
+    }
+    testOptions {
+        unitTests.all {
+            jvmArgs "-Dnet.bytebuddy.experimental=true"
+        }
     }
 }
 android {
@@ -51,10 +57,10 @@ android {
 
 dependencies {
     implementation project(':FtcRobotController')
-    implementation("dev.frozenmilk.sinister:Sloth:0.2.4")
-    implementation("com.acmerobotics.slothboard:dashboard:0.2.4+0.4.17")
+    implementation("dev.frozenmilk.sinister:Sloth:0.3.2")
+    implementation("com.acmerobotics.slothboard:dashboard:0.3.2+0.6.0")
     implementation("org.ejml:ejml-all:0.44.0")
-    implementation("com.broombots.sweep:sweep-core:0.9.0-beta")
+    implementation("com.broombots.sweep:sweep-core:0.9.1-beta")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.14.2")
 }

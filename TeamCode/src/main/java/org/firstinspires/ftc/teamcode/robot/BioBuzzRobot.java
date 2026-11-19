@@ -8,22 +8,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.actions.ExampleAction;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Drivetrain;
-import org.firstinspires.ftc.teamcode.robot.subsystems.launcher.Flywheel;
-import org.firstinspires.ftc.teamcode.robot.subsystems.launcher.PollenLauncher;
-import org.firstinspires.ftc.teamcode.robot.subsystems.launcher.TurretLauncher;
 
+@Config
 public class BioBuzzRobot extends SWEEPRobot {
     // Robot subsystems
     Drivetrain drivetrain;
-    Flywheel flywheelPollen;
-
-    Flywheel flywheelNectar;
-    TurretLauncher pollenLauncher;
+    BallControl ballControl;
 
 
     /**
-     * Constructor for the SoftwareTestingBot class.
-     * Initializes the robot's subsystems and takes FIRSTSDK bits
+     * Creates the robot and initializes its drivetrain and launchers.
+     *
      * @param hardwareMap The hardware map used to access the robot's hardware components.
      * @param telemetry   The telemetry object used for sending data to the driver station.
      */
@@ -31,10 +26,10 @@ public class BioBuzzRobot extends SWEEPRobot {
     public BioBuzzRobot(HardwareMap hardwareMap, Telemetry telemetry){
         runtime = new ElapsedTime();
         this.drivetrain = new Drivetrain(hardwareMap, telemetry, false);
-        this.pollenLauncher = new PollenLauncher(hardwareMap,telemetry);
+        this.ballControl = new BallControl(hardwareMap, telemetry, runtime, Alliance.RED);
         subsystems = new Subsystem[]{
                 drivetrain,
-                pollenLauncher,
+                ballControl
         };
     }
     /**
@@ -49,21 +44,24 @@ public class BioBuzzRobot extends SWEEPRobot {
      * This method is called repeatedly during the teleop period.
      */
     public void teleopUpdate() {
+        drivetrain.update();
         updateActions();
+        telemetry.update();
     }
     /**
      * Updates the robot's subsystems and actions during autonomous mode.
      * This method is called repeatedly during the autonomous period.
      */
     public void autonomousUpdate() {
+        drivetrain.update();
         updateActions();
     }
     // Subsystem getters
     public Drivetrain getDrivetrain() {
         return drivetrain;
     }
-    public Flywheel getFlywheelPollen(){
-        return flywheelPollen;
+    public BallControl getBallControl() {
+        return ballControl;
     }
     // Robot action definitions
     /**

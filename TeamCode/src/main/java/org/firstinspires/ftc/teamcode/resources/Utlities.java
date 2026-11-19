@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Resources;
+package org.firstinspires.ftc.teamcode.resources;
 
 public class Utlities {
     // used to keep angles within a range of 360 even when turning on for a while
