@@ -153,10 +153,10 @@ public class Flywheel implements Subsystem {
      */
     public void postTelemetry(){
         telemetry.addLine("----Flywheel Data");
-        telemetry.addData("FLYWHEELvelocity", currentSpeed);
+        telemetry.addData("FLYWHELLvelocity", currentSpeed);
 
     }
-    //The next 3 get what the PID values are and then tells you what they are
+    //The next 4 get what the PID values are and then tells you what they are
     public int getP() {
         return p;
     }
