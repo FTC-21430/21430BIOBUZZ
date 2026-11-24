@@ -29,7 +29,7 @@ public class NectarTurretLauncher extends GenericTurretLauncher {
      */
     public NectarTurretLauncher(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime runtime) {
         super(new LauncherRamp(hardwareMap, "nectarLauncherRamp",servoROM,rampROM,minRampAngle),
-                new Flywheel(hardwareMap, telemetry, runtime, "nectarFlywheel"),
+                new Flywheel(hardwareMap, telemetry, runtime, "nectarFlywheel",true),
                 new Turret(hardwareMap, "nectarTurretServo", "nectarTurretEncoder","nectarTurretBeam",encoderTicksToRevOfTurret,turretP,turretI,turretD,errorTolerance,turretROM)
         );
     }

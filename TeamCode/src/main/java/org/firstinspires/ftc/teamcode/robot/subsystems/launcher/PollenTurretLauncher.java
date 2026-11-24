@@ -29,7 +29,7 @@ public class PollenTurretLauncher extends GenericTurretLauncher {
     public PollenTurretLauncher(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime runtime) {
         super(
             new LauncherRamp(hardwareMap, "pollenLauncherRamp",servoROM,rampROM,minRampAngle),
-            new Flywheel(hardwareMap, telemetry, runtime, "pollenFlywheel"),
+            new Flywheel(hardwareMap,telemetry, runtime, "pollenFlywheel",true),
             new Turret(hardwareMap, "pollenTurretServo", "pollenTurretEncoder","pollenTurretBeam",encoderTicksToRevOfTurret,turretP,turretI,turretD,errorTolerance,turretROM)
         );
     }

@@ -7,7 +7,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class PollenLauncher extends TurretLauncher{
     public PollenLauncher(HardwareMap hardwareMap, Telemetry telemetry){
-        //TODO still need to tune these PID values once we start testing with actual robot
-        super(new LauncherRamp(hardwareMap),new PollenFlywheel(hardwareMap,telemetry,new ElapsedTime()),new Turret(hardwareMap,9,9,9,"turret_servo","turret_encoder"));
+        //TODO still need to tune these PID values once we start testing with actual robot and also tune all the turret values
+        super(new LauncherRamp(hardwareMap,"pollen_flywheel",30,12,14),new PollenFlywheel(hardwareMap,telemetry,new ElapsedTime()),new Turret(hardwareMap,"servo_turret","encoder_turret","beamBreakSensor_turret",30,70,14,30,25,40));
     }
 }
