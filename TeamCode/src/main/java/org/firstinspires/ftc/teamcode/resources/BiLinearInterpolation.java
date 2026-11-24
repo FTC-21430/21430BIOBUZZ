@@ -22,16 +22,29 @@ public class BiLinearInterpolation {
             valueSet2.add(measurement.value2);
         }
     }
+    public Pair GetInterpolatedPairAlongX(Pair tunedPair1, Pair tunedPair2, double targetX){
+        double scalar1 = (tunedPair2.x - targetX)/(tunedPair2.x - tunedPair1.x);
+        double scalar2 = (targetX - tunedPair1.x)/(tunedPair2.x-tunedPair1.x);
+
+        return new Pair(scalar1 * tunedPair1.x + scalar2 * tunedPair2.x, scalar1 * tunedPair1.y + scalar2 * tunedPair2.y);
+    }
+    public Pair GetInterpolationPairAlongY(Pair pair1, Pair pair2, double targetY){
+        double scalar1 = (pair2.y - targetY)/(pair2.y-pair1.y);
+        double scalar2 = (targetY - pair1.y)/(pair2.y-pair1.y);
+
+        return new Pair(pair1.x, scalar1 * pair1.y + scalar2 * pair2.y);
+    }
 }
+
 class Pair {
-    public double key1;
-    public double key2;
+    public double x;
+    public double y;
     public Pair(double key1, double key2){
-        this.key1 = key1;
-        this.key2 = key2;
+        this.x = key1;
+        this.y = key2;
     }
     public boolean equals(Pair other){
         double EPSILON = 1e-7;
-        return this.key1 - other.key1 < EPSILON && this.key2 - other.key2 < EPSILON;
+        return this.x - other.x < EPSILON && this.y - other.y < EPSILON;
     }
 }
