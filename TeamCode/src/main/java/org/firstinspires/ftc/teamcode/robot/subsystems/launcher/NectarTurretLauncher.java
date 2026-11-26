@@ -19,6 +19,7 @@ public class NectarTurretLauncher extends GenericTurretLauncher {
     public static double turretD = 0.0;
     public static double errorTolerance = 3.0; // degrees
     public static double turretROM = 420; //degrees of rotation for the turret
+    public static double homingPower = -0.05;
 
     /**
      * Creates the nectar launcher using its configured hardware names.
@@ -29,8 +30,8 @@ public class NectarTurretLauncher extends GenericTurretLauncher {
      */
     public NectarTurretLauncher(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime runtime) {
         super(new LauncherRamp(hardwareMap, "nectarLauncherRamp",servoROM,rampROM,minRampAngle),
-                new Flywheel(hardwareMap, telemetry, runtime, "nectarFlywheel"),
-                new Turret(hardwareMap, "nectarTurretServo", "nectarTurretEncoder","nectarTurretBeam",encoderTicksToRevOfTurret,turretP,turretI,turretD,errorTolerance,turretROM)
+                new Flywheel(hardwareMap, telemetry, runtime, "nectarFlywheel",true),
+                new Turret(hardwareMap, "nectarTurretServo", "nectarTurretEncoder","nectarTurretBeam",encoderTicksToRevOfTurret,turretP,turretI,turretD,errorTolerance,turretROM,homingPower)
         );
     }
 }
