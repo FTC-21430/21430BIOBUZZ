@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.actions.ExampleAction;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Drivetrain;
 
-@Config
+//@Config
 public class BioBuzzRobot extends SWEEPRobot {
     // Robot subsystems
     Drivetrain drivetrain;
