@@ -1,34 +1,35 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import com.broombots.sweep.Classes.Coordinate;
 import com.broombots.sweep.Classes.Pos2D;
 import com.broombots.sweep.Classes.SWEEPRobot;
 import com.broombots.sweep.Classes.Subsystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.actions.ExampleAction;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Drivetrain;
-import org.firstinspires.ftc.teamcode.robot.subsystems.Flywheel;
 
+@Config
 public class BioBuzzRobot extends SWEEPRobot {
     // Robot subsystems
     Drivetrain drivetrain;
-    Flywheel flywheel;
+    BallControl ballControl;
+
+
     /**
-     * Constructor for the SoftwareTestingBot class.
-     * Initializes the robot's subsystems and takes FIRSTSDK bits
+     * Creates the robot and initializes its drivetrain and launchers.
+     *
      * @param hardwareMap The hardware map used to access the robot's hardware components.
      * @param telemetry   The telemetry object used for sending data to the driver station.
      */
+    //Will update numbers when testing for flywheel and nectar speeds that we need. Right now this works for Siphysius
     public BioBuzzRobot(HardwareMap hardwareMap, Telemetry telemetry){
         runtime = new ElapsedTime();
         this.drivetrain = new Drivetrain(hardwareMap, telemetry, false);
-        this.flywheel = new Flywheel(hardwareMap, telemetry, new ElapsedTime(),70,65,45);
+        this.ballControl = new BallControl(hardwareMap, telemetry, runtime, Alliance.RED);
         subsystems = new Subsystem[]{
                 drivetrain,
-                flywheel
+                ballControl
         };
     }
     /**
@@ -43,21 +44,24 @@ public class BioBuzzRobot extends SWEEPRobot {
      * This method is called repeatedly during the teleop period.
      */
     public void teleopUpdate() {
+        drivetrain.update();
         updateActions();
+        telemetry.update();
     }
     /**
      * Updates the robot's subsystems and actions during autonomous mode.
      * This method is called repeatedly during the autonomous period.
      */
     public void autonomousUpdate() {
+        drivetrain.update();
         updateActions();
     }
     // Subsystem getters
     public Drivetrain getDrivetrain() {
         return drivetrain;
     }
-    public Flywheel getFlywheel(){
-        return flywheel;
+    public BallControl getBallControl() {
+        return ballControl;
     }
     // Robot action definitions
     /**
@@ -68,8 +72,13 @@ public class BioBuzzRobot extends SWEEPRobot {
      * @return An instance of ExampleAction.
      */
     public ExampleAction exampleAction(Pos2D position, double time, double range){
-        return new ExampleAction(this, position, time, range);
+        return new ExampleAction(this, position, time, range, 0);
     }
+    /*
+    public SetFlywheelSpeedAction flywheelAction(Pos2D position, double time,double speed){
+        return new SetFlywheelSpeedAction(this, position,time,speed);
+    }
+     */
 
 
     /**
@@ -77,6 +86,6 @@ public class BioBuzzRobot extends SWEEPRobot {
      * @return new exampleAction
      */
     public ExampleAction exampleAction(){
-        return new ExampleAction(this, null, getDefaultActionTime(), getDefaultActionRange());
+        return new ExampleAction(this);
     }
 }

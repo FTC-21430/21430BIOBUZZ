@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.robot.actions;
 
 import com.broombots.sweep.Classes.Action;
@@ -7,17 +8,22 @@ import org.firstinspires.ftc.teamcode.robot.BioBuzzRobot;
 
 public class SetFlywheelSpeedAction extends Action {
     BioBuzzRobot robot;
-    double speed;
-    public SetFlywheelSpeedAction (BioBuzzRobot robot, double speed){
+    double flywheeelSpeed;
+    double time;
+    Pos2D position;
+    public SetFlywheelSpeedAction (BioBuzzRobot robot, Pos2D position,double time, double speed){
         super(robot);
         this.robot=robot;
-        this.speed=speed;
+        this.flywheeelSpeed=speed;
+        this.time=time;
+        this.position = position;
+
     }
 
 
     @Override
     public void execute() {
-        robot.getFlywheel().setTargetSpeed(speed);
+        robot.getFlywheelPollen().setTargetSpeed(flywheeelSpeed);
     }
     @Override
     public void process(){
@@ -25,7 +31,10 @@ public class SetFlywheelSpeedAction extends Action {
     }
     @Override public boolean completion(){
         // This is where you would put the code that you want to run to check if this action is complete
-        return true; // Action is complete
+        if(time >=2){
+            return true;
+        }
+        return false; // Action is complete
     }
     @Override
     public boolean interrupt(){
@@ -39,3 +48,4 @@ public class SetFlywheelSpeedAction extends Action {
         // This is where you would put the code that you want to run when this action is completed
     }
 }
+ */
