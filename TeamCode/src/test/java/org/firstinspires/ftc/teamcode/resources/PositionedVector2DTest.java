@@ -2,12 +2,18 @@ package org.firstinspires.ftc.teamcode.resources;
 
 import static org.junit.Assert.assertEquals;
 import com.broombots.sweep.Classes.Pos2D;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PositionedVector2DTest {
+
+    @Mock
+    HardwareMap hardwareMap;
 
     @Test
     public void ensureCorrectConstructorDefaults(){
