@@ -39,18 +39,16 @@ android {
         }
         jniLibs.useLegacyPackaging true
     }
-    testOptions {
-        unitTests.all {
-            jvmArgs "-Dnet.bytebuddy.experimental=true"
-        }
-    }
-}
-android {
-    // ... your existing compileSdk, defaultConfig, etc.
 
     testOptions {
-        unitTests.all {
-            jvmArgs "-Dnet.bytebuddy.experimental=true"
+        unitTests {
+            returnDefaultValues = true
+            all {
+                jvmArgs '-XX:+EnableDynamicAgentLoading'
+                testLogging {
+                    events 'passed', 'skipped', 'failed'
+                }
+            }
         }
     }
 }
@@ -62,5 +60,5 @@ dependencies {
     implementation("org.ejml:ejml-all:0.44.0")
     implementation("com.broombots.sweep:sweep-core:0.9.1-beta")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito:mockito-core:5.14.2")
+    testImplementation("org.mockito:mockito-core:5.20.2")
 }
