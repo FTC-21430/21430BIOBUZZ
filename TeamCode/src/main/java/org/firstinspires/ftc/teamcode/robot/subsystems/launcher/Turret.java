@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.launcher;
 
+import android.util.Log;
+
 import com.broombots.sweep.Classes.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -17,7 +20,7 @@ public class Turret implements Subsystem {
     private final PIDController servoPidController;
     private boolean isDisabled = false;
     private boolean isHoming = false;
-    private final double HOMING_DIRECTION = 0.1; //TODO: find a good homing power, this is just a guess https://github.com/FTC-21430/21430BIOBUZZ/issues/37
+    private final double HOMING_DIRECTION;
     private final double STOP_SPEED = 0.5; // Neutral continuous-rotation servo position.
     private final double GOBILDA_TURRET_GEAR_RATIO = 2.75; // 2.75:1 ratio of turret to servo
     private final double ENCODER_TICKS_PER_REV = 4000; // 4000 ticks per revolution of the encoder
@@ -26,6 +29,14 @@ public class Turret implements Subsystem {
     private final double turretZeroOffset = 0; // degrees of offset from the zero position of the turret should be zero but...
     private final double errorTolerance; // degrees
     private double currentAngle; // degrees, sampled during update
+    private final double PWM_DEAD_BAND = 0.154;
+
+    private final double PWM_SWYFT_SPEED_LOW = 0.46333;
+    private final double PWM_SWYFT_SPEED_HIGH = 0.52395;
+
+    //0.5256
+    //0.46445
+
 
 
 
@@ -43,16 +54,19 @@ public class Turret implements Subsystem {
      * @param errorTolerance acceptable aiming error in degrees
      * @param ROM turret range of motion in degrees
      */
-    public Turret(HardwareMap hardwareMap, String servoHardwareAddress, String encoderHardwareAddress, String beamBreakSensorHardwareAddress, double encoderTicksToRevOfTurret, double pConstant, double iConstant, double dConstant, double errorTolerance, double ROM) {
+    public Turret(HardwareMap hardwareMap, String servoHardwareAddress, String encoderHardwareAddress, String beamBreakSensorHardwareAddress, double encoderTicksToRevOfTurret, double pConstant, double iConstant, double dConstant, double errorTolerance, double ROM, double homingPower) {
         this.errorTolerance = errorTolerance;
         this.turretROM = ROM;
         turretServo = hardwareMap.get(Servo.class, servoHardwareAddress);
         turretEncoder = hardwareMap.get(DcMotor.class, encoderHardwareAddress);
-        homingSensor = new BeamBreakSensor(beamBreakSensorHardwareAddress, hardwareMap, false);
+        homingSensor = new BeamBreakSensor(beamBreakSensorHardwareAddress, hardwareMap, true);
         turretEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turretEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         servoPidController = new PIDController(pConstant, iConstant, dConstant, new ElapsedTime(),false);
         currentAngle = 0;
+        HOMING_DIRECTION = homingPower;
+//        PwmControl.PwmRange finerRange = new PwmControl.PwmRange(1350,1650);
+//        ((PwmControl) turretServo).setPwmRange(finerRange);
     }
 
     /**
@@ -85,7 +99,9 @@ public class Turret implements Subsystem {
             }
             return;
         }
-        turretServo.setPosition(scaleToPWMPower(servoPidController.getPower()));
+            turretServo.setPosition(scaleToPWMPower(servoPidController.getPower()));
+
+
     }
     /**
      * Sets the nearest equivalent target angle within the turret range.
@@ -114,6 +130,14 @@ public class Turret implements Subsystem {
     public void setPIDCoefficients(double p, double i, double d){
         servoPidController.updatePIDConstants(p,i,d);
     }
+
+    /**
+     * returns if the turret is currently in a homing sequence
+     * @return
+     */
+    public boolean isHoming(){
+        return isHoming;
+    }
     /**
      * Checks the sampled angle against the target and configured tolerance.
      *
@@ -141,7 +165,17 @@ public class Turret implements Subsystem {
      * @return scaled servo position
      */
     private double scaleToPWMPower(double power){
-        return (power/2)+0.5;
+        double result = (power/-2)+0.5;
+//        if (Math.abs(result - 0.5) < 0.005){
+//            result = 0.5;
+//        }else{
+//            if (result > 0.5 && result < PWM_SWYFT_SPEED_HIGH){
+//                result = PWM_SWYFT_SPEED_HIGH;
+//            } else if (result < 0.5 && result > PWM_SWYFT_SPEED_LOW) {
+//                result = PWM_SWYFT_SPEED_LOW;
+//            }
+//        }
+        return result;
     }
     /**
      * Finds the nearest in-range equivalent of a requested direction.

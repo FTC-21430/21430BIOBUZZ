@@ -7,18 +7,19 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 /** Launcher configured for the pollen hardware devices. */
 public class PollenTurretLauncher extends GenericTurretLauncher {
     /** Servo range of motion used to configure the ramp. */
-    public static double servoROM = 1;
+    public static double servoROM = 420;
     /** Ramp range of motion. */
     public static double rampROM = 1;
     /** Minimum ramp angle. */
     public static double minRampAngle = 37.5;
     /** Encoder ticks per turret revolution supplied to the turret constructor. */
     public static double encoderTicksToRevOfTurret = 4000*2.75;
-    public static double turretP = 0.1;
-    public static double turretI = 0.0;
-    public static double turretD = 0.0;
+    public static double turretP = 8.5e-3;
+    public static double turretI = 9e-4;
+    public static double turretD = 1e-5;
     public static double errorTolerance = 3.0; // degrees
     public static double turretROM = 420; //degrees of rotation for the turret
+    public static double homingPower = -0.05;
     /**
      * Creates the pollen launcher using its configured hardware names.
      *
@@ -29,8 +30,8 @@ public class PollenTurretLauncher extends GenericTurretLauncher {
     public PollenTurretLauncher(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime runtime) {
         super(
             new LauncherRamp(hardwareMap, "pollenLauncherRamp",servoROM,rampROM,minRampAngle),
-            new Flywheel(hardwareMap, telemetry, runtime, "pollenFlywheel"),
-            new Turret(hardwareMap, "pollenTurretServo", "pollenTurretEncoder","pollenTurretBeam",encoderTicksToRevOfTurret,turretP,turretI,turretD,errorTolerance,turretROM)
+            new Flywheel(hardwareMap, telemetry, runtime, "pollenFlywheel",true),
+            new Turret(hardwareMap, "pollenTurretServo", "pollenTurretEncoder","pollenTurretBeam",encoderTicksToRevOfTurret,turretP,turretI,turretD,errorTolerance,turretROM,homingPower)
         );
     }
 }

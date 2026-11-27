@@ -50,7 +50,7 @@ public class TurretTests {
         when(hardwareMap.get(DcMotor.class, "encoder")).thenReturn(encoder);
         when(hardwareMap.get(DigitalChannel.class, "beam")).thenReturn(homingSensor);
         turret = new Turret(hardwareMap, "servo", "encoder", "beam",
-                TICKS_PER_TURRET_REVOLUTION, 0.1, 0, 0, 2, ROM);
+                TICKS_PER_TURRET_REVOLUTION, 0.1, 0, 0, 2, ROM,0.1);
     }
 
     @Test
@@ -225,7 +225,7 @@ public class TurretTests {
     @Test
     public void narrowRangeRejectsUnreachableTargetsThenAcceptsValidTarget() {
         turret = new Turret(hardwareMap, "servo", "encoder", "beam",
-                TICKS_PER_TURRET_REVOLUTION, 0.1, 0, 0, 2, 180);
+                TICKS_PER_TURRET_REVOLUTION, 0.1, 0, 0, 2, 180,0.1);
         turret.setTurretAngle(45);
 
         try (MockedStatic<Log> log = Mockito.mockStatic(Log.class)) {
